@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zerodha: How a Late Entrant Out-Priced and Out-Lasted the Incumbents — PM Case Study & PRD</title>
+  <meta name="description" content="A comprehensive Product Management Case Study & PRD on Zerodha: flat pricing revolution, the F&O concentration risk, Groww's takeover, and the Kite Start PRD." />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #0F172A;
+      --ink2: #475569;
+      --ink3: #94A3B8;
+      --bg: #F8FAFC;
+      --paper: #FFFFFF;
+      --line: #E2E8F0;
+      --line2: #CBD5E1;
+
+      /* Zerodha & Semantic Palette */
+      --zerodha-blue: #387ED1;
+      --zerodha-dark: #1E293B;
+      --groww-green: #00D09C;
+      --crimson: #EF4444;
+      --crimson-dark: #B91C1C;
+      --emerald: #10B981;
+      --amber: #F59E0B;
+      --violet: #8B5CF6;
+      --sky: #0EA5E9;
+      
+      --sec: var(--zerodha-blue);
+      --c-value: #059669;
+      --c-fail: var(--crimson);
+      --c-product: var(--zerodha-blue);
+      --c-fix: #00D09C;
+    }
+
+    /* Section Accents */
+    #summary { --sec: var(--zerodha-blue); }
+    #context { --sec: var(--sky); }
+    #strategy { --sec: var(--emerald); }
+    #timeline { --sec: var(--amber); }
+    #finance { --sec: var(--emerald); }
+    #competition { --sec: var(--violet); }
+    #lessons { --sec: var(--crimson); }
+    #prd { --sec: var(--zerodha-blue); }
+    #rollout { --sec: var(--emerald); }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.015em;
+      overflow-x: clip;
+    }
+
+    #ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(130% 90% at 50% 20%, rgba(56, 126, 209, 0.04) 0%, transparent 60%),
+        radial-gradient(100% 70% at 85% 80%, rgba(0, 208, 156, 0.035) 0%, transparent 55%),
+        linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+    }
+    #ambient::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 1px 1px, rgba(30, 41, 59, 0.035) 1px, transparent 1.6px) 0 0/24px 24px;
+    }
+
+    #content { position: relative; z-index: 2; }
+    section {
+      position: relative;
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 3.5rem 6vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      scroll-margin-top: 30px;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4 { color: var(--ink); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; }
+    #content section:not(#hero) h2 {
+      font-size: clamp(2.1rem, 3.8vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      margin-top: 0.5rem;
+    }
+    #content section:not(#hero) h2::after {
+      content: "";
+      display: block;
+      width: 54px;
+      height: 4px;
+      border-radius: 4px;
+      background: var(--sec);
+      margin-top: 0.85rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.74rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--sec);
+      padding: 0.38rem 0.85rem;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--sec) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--sec) 24%, transparent);
+      margin-bottom: 0.75rem;
+      width: fit-content;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sec);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Cards & Glass Surfaces */
+    .glass {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 16px 36px rgba(15, 23, 42, 0.04);
+    }
+    .card3d {
+      border-radius: 18px;
+      padding: 1.5rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.32s, border-color 0.32s;
+    }
+    .card3d:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 42px rgba(15, 23, 42, 0.08);
+      border-color: #CBD5E1;
+    }
+
+    /* 3D Tilt */
+    .tilt {
+      transition: transform 0.16s ease-out, box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-style: preserve-3d;
+    }
+
+    /* Keywords */
+    .kw {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.02em;
+      padding: 0.32rem 0.72rem;
+      margin: 0.2rem 0.2rem 0 0;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--ink2);
+      background: var(--paper);
+      font-weight: 600;
+    }
+
+    /* Table System */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    th, td {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+    th:first-child, td:first-child { border-left: 1px solid var(--line); }
+    tr:first-child th { border-top: 1px solid var(--line); }
+    tr:first-child th:first-child { border-top-left-radius: 12px; }
+    tr:first-child th:last-child { border-top-right-radius: 12px; }
+    tr:last-child td:first-child { border-bottom-left-radius: 12px; }
+    tr:last-child td:last-child { border-bottom-right-radius: 12px; }
+    th {
+      color: var(--ink2);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      background: #F8FAFC;
+    }
+    tbody tr:nth-child(even) td { background: #FAFBFD; }
+    table tr:hover td { background: #F1F5F9; }
+    .win { color: #059669; font-weight: 700; }
+    .lose { color: var(--crimson); font-weight: 700; }
+
+    /* Custom Navigation & Indicators */
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--zerodha-blue), #00D09C 45%, var(--violet) 75%, var(--crimson));
+      z-index: 50;
+      width: 0%;
+      transition: width 0.1s ease-out;
+    }
+    #read-ind {
+      position: fixed;
+      top: 14px;
+      left: 18px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.44rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+      font-size: 0.78rem;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+    #read-ind.show { opacity: 1; transform: none; }
+    #read-ind .ri-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--zerodha-blue);
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot {
+      0% { box-shadow: 0 0 0 0 rgba(56, 126, 209, 0.5); }
+      70% { box-shadow: 0 0 0 8px rgba(56, 126, 209, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(56, 126, 209, 0); }
+    }
+
+    #sidenav {
+      position: fixed;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #sidenav a {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #CBD5E1;
+      position: relative;
+      transition: 0.25s;
+    }
+    #sidenav a:hover, #sidenav a.active {
+      background: var(--zerodha-blue);
+      transform: scale(1.5);
+    }
+    #sidenav a span {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--ink);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.2s;
+    }
+    #sidenav a:hover span { opacity: 1; }
+
+    #toTop {
+      position: fixed;
+      right: 16px;
+      bottom: 20px;
+      z-index: 40;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.3s;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15);
+    }
+    #toTop.show { opacity: 1; }
+
+    /* Chapter divider line */
+    .sec-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 1240px;
+      margin: clamp(1.8rem, 4vh, 3.2rem) auto 0;
+      padding: 0 6vw;
+    }
+    .sec-divider .sd-idx {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #fff;
+      background: var(--sec, var(--ink));
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .sec-divider .sd-name {
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sec, var(--ink2));
+      white-space: nowrap;
+    }
+    .sec-divider .sd-line {
+      flex: 1;
+      height: 2px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--sec, var(--line)) 0%, var(--line) 30%, transparent 100%);
+      opacity: 0.6;
+    }
+
+    /* =========================================
+       HERO: Bespoke Zerodha Fintech Hero Frame
+       ========================================= */
+    .hero-frame {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      padding: clamp(2rem, 5vw, 4rem);
+      background: radial-gradient(120% 150% at 0% 0%, #FFFFFF 0%, #F8FAFC 50%, #F1F5F9 100%);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.03), 0 32px 75px rgba(15, 23, 42, 0.07);
+    }
+    .hero-frame::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--zerodha-blue) 0%, #00D09C 40%, var(--violet) 70%, var(--crimson) 100%);
+    }
+    .hero-stat {
+      position: relative;
+      padding: 1.2rem 1.3rem;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--paper);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+    }
+    .hero-stat::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 16px;
+      bottom: 16px;
+      width: 4px;
+      border-radius: 4px;
+      background: var(--ac, var(--zerodha-blue));
+    }
+    .hero-stat:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+    }
+    .hero-stat .num {
+      display: block;
+      font-size: clamp(1.6rem, 2.5vw, 2.15rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--ac, var(--ink));
+    }
+    .hero-stat .lbl {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.78rem;
+      color: var(--ink2);
+      font-weight: 600;
+    }
+
+    /* Financial Scenario Buttons */
+    .fin-scn-row {
+      display: inline-flex;
+      padding: 4px;
+      background: #F1F5F9;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+    }
+    .fin-scn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--ink2);
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 0.44rem 0.95rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .fin-scn:hover { color: var(--ink); }
+    .fin-scn.on {
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+    }
+
+    /* PRD Persona Tabs */
+    .persona-tabs {
+      display: inline-flex;
+      padding: 4px;
+      background: #F1F5F9;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      flex-wrap: wrap;
+    }
+    .persona-tabs button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--ink2);
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .persona-tabs button:hover { color: var(--ink); }
+    .persona-tabs button.on {
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Timeline Depth-Scroll */
+    #timeline { padding: 0; max-width: none; display: block; position: relative; background: #0A0F1D; }
+    #dz-pin {
+      position: sticky; top: 0; height: 100vh; overflow: hidden; perspective: 1200px; perspective-origin: 50% 47%;
+      background: radial-gradient(120% 100% at 50% 40%, #111827 0%, #0A0F1D 60%, #030712 100%);
+    }
+    #dz-particles { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; }
+    #dz-stage { position: absolute; inset: 0; z-index: 2; transform-style: preserve-3d; will-change: transform; }
+    .dz-card {
+      position: absolute; left: 50%; top: 52%; width: min(1140px, 94vw);
+      transform: translate(-50%, -50%) translateZ(var(--z, 0px)) translateY(calc((1 - var(--app, 0)) * 34px)) rotateX(calc((1 - var(--app, 0)) * 6deg)) scale(calc(0.92 + var(--app, 0) * 0.08));
+      transform-style: preserve-3d; backface-visibility: hidden; border-radius: 26px; padding: clamp(1.8rem, 3.2vw, 3rem);
+      opacity: 0; --acc: var(--zerodha-blue); --app: 0; will-change: transform, opacity, filter;
+    }
+    .dz-card[data-surface="light"] {
+      background: rgba(255, 255, 255, 0.98); border: 1px solid rgba(255, 255, 255, 0.7); color: #0F172A;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    }
+    .dz-card[data-surface="dark"] {
+      background: linear-gradient(155deg, rgba(30, 41, 59, 0.97), rgba(15, 23, 42, 0.99));
+      border: 1px solid rgba(239, 68, 68, 0.3); color: #F8FAFC;
+      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.5), 0 0 50px rgba(239, 68, 68, 0.15);
+    }
+    .dzc-kicker {
+      display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--acc);
+    }
+    .dzc-kicker::before { content: ""; width: 24px; height: 2px; background: var(--acc); }
+    .dzc-title { font-size: clamp(2rem, 3.8vw, 3.2rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; margin: 0.6rem 0 0; }
+    .dzc-lead { font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.55; margin: 0.75rem 0 0; max-width: 60ch; opacity: 0.88; }
+    .dzc-body { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(1.2rem, 2vw, 2.2rem); margin-top: clamp(1.2rem, 2vw, 1.6rem); align-items: start; }
+    .dzc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .dzc-block { padding: 0.9rem 1.1rem; border-radius: 14px; }
+    .dz-card[data-surface="light"] .dzc-block { background: rgba(15, 23, 42, 0.04); border: 1px solid rgba(15, 23, 42, 0.08); }
+    .dz-card[data-surface="dark"] .dzc-block { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); }
+    .dzc-block .k { display: block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--acc); }
+    .dzc-block b { display: block; font-size: 1.08rem; margin-top: 0.3rem; font-weight: 700; line-height: 1.22; }
+    .dzc-block span { display: block; font-size: 0.8rem; opacity: 0.75; margin-top: 0.15rem; line-height: 1.35; }
+    .dzc-lesson { margin-top: clamp(1.1rem, 1.8vw, 1.5rem); padding: 0.95rem 1.25rem; border-left: 4px solid var(--acc); border-radius: 0 14px 14px 0; font-size: 1.1rem; font-weight: 600; line-height: 1.45; }
+    .dz-card[data-surface="light"] .dzc-lesson { background: rgba(15, 23, 42, 0.04); }
+    .dz-card[data-surface="dark"] .dzc-lesson { background: rgba(239, 68, 68, 0.12); }
+    .dzc-lesson .k { display: block; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--acc); margin-bottom: 0.2rem; }
+    .dzc-viz { border-radius: 16px; padding: 1.1rem; }
+    .dz-card[data-surface="light"] .dzc-viz { background: rgba(15, 23, 42, 0.025); border: 1px solid rgba(15, 23, 42, 0.08); }
+    .dz-card[data-surface="dark"] .dzc-viz { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); }
+    
+    #dz-hud { position: absolute; inset: 0; z-index: 10; pointer-events: none; color: #fff; }
+    #dz-top {
+      position: absolute; top: clamp(18px, 3vh, 32px); left: 0; right: 0; text-align: center;
+      padding: 0.5rem 1.2rem;
+      pointer-events: none;
+    }
+    #dz-top .e { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+    #dz-mood { font-size: clamp(1.1rem, 2vw, 1.45rem); font-weight: 900; letter-spacing: -0.02em; margin-top: 0.2rem; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+    #dz-rail { position: absolute; left: clamp(16px, 3vw, 42px); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 0.8rem; pointer-events: auto; }
+    .dz-dot { position: relative; width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); border: none; padding: 0; cursor: pointer; transition: 0.3s; }
+    .dz-dot:hover { background: rgba(255, 255, 255, 0.6); }
+    .dz-dot.on { background: var(--acc, #fff); transform: scale(1.6); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.12); }
+    .dz-dot .lab { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-size: 0.65rem; font-weight: 700; color: rgba(255, 255, 255, 0.9); background: rgba(0, 0, 0, 0.6); padding: 0.2rem 0.55rem; border-radius: 6px; opacity: 0; pointer-events: none; transition: 0.2s; }
+    .dz-dot:hover .lab, .dz-dot.on .lab { opacity: 1; }
+    #dz-prog { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255, 255, 255, 0.15); }
+    #dz-prog i { display: block; height: 100%; width: 0; background: var(--zerodha-blue); }
+
+    /* Animated Card Visual Elements */
+    .dz-bar-grow {
+      height: 0%;
+      transition: height 1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+    }
+    .dz-card.active .dz-bar-grow {
+      height: var(--target-h, 100%);
+    }
+
+    .dz-hbar-grow {
+      width: 0%;
+      transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    }
+    .dz-card.active .dz-hbar-grow {
+      width: var(--target-w, 100%);
+    }
+
+    .dz-fade-in {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+    }
+    .dz-card.active .dz-fade-in {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Timeline fallback */
+    #timeline.dz-fallback { height: auto !important; background: transparent; padding: 3.5rem 6vw; max-width: 1240px; margin: 0 auto; }
+    #timeline.dz-fallback .dz-fb-head { display: block; margin-bottom: 2rem; }
+    #timeline.dz-fallback #dz-pin { position: static; height: auto; overflow: visible; perspective: none; background: none; }
+    #timeline.dz-fallback #dz-particles, #timeline.dz-fallback #dz-hud { display: none; }
+    #timeline.dz-fallback #dz-stage { position: static; transform: none !important; transform-style: flat; display: flex; flex-direction: column; gap: 1.8rem; }
+    #timeline.dz-fallback .dz-card { position: static; left: auto; top: auto; transform: none !important; opacity: 1 !important; visibility: visible !important; filter: none !important; width: 100%; }
+    .dz-fb-head { display: none; }
+
+    /* Interactive Simulation Mode Switch */
+    .sim-toggle {
+      display: flex;
+      align-items: center;
+      background: #F1F5F9;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+      width: fit-content;
+    }
+    .sim-toggle-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--ink2);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .sim-toggle-btn.active {
+      background: #FFFFFF;
+      color: var(--zerodha-blue);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+  </style>
+</head>
+<body class="relative">
+
+  <!-- Ambient Backdrop -->
+  <div id="ambient"></div>
+
+  <!-- Reading Indicator & Global Progress -->
+  <div id="progress"></div>
+  <div id="read-ind">
+    <span class="ri-dot"></span>
+    <span class="ri-idx" id="ri-idx">01</span>
+    <span class="ri-name" id="ri-name">Executive Summary</span>
+  </div>
+
+  <!-- Quick Floating Sidenav -->
+  <nav id="sidenav">
+    <a href="#hero" class="active"><span>Overview</span></a>
+    <a href="#summary"><span>1. Summary</span></a>
+    <a href="#context"><span>2. Context & Gap</span></a>
+    <a href="#strategy"><span>3. Strategy</span></a>
+    <a href="#timeline"><span>Timeline</span></a>
+    <a href="#finance"><span>4. Financials</span></a>
+    <a href="#competition"><span>5. Competition</span></a>
+    <a href="#lessons"><span>6. Lessons & Risks</span></a>
+    <a href="#prd"><span>7. Kite Start PRD</span></a>
+  </nav>
+
+  <!-- Scroll to Top -->
+  <button id="toTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Back to Top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <div id="content">
+
+    <!-- ==============================================================
+         HERO SECTION: Bespoke Zerodha Fintech Flagship Experience
+         ============================================================== -->
+    <section id="hero" data-nav="Overview" class="pt-10 pb-8">
+      <div class="hero-frame tilt">
+        
+        <!-- Live Status Pill & Founder Tagline -->
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 tracking-wider uppercase">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            PM Deep Dive &middot; Data as of Oct 2026
+          </div>
+          <div class="flex items-center gap-3 text-xs font-semibold text-slate-500">
+            <span>Founded 2010</span>
+            <span>&bull;</span>
+            <span>Bengaluru</span>
+            <span>&bull;</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">100% Bootstrapped</span>
+          </div>
+        </div>
+
+        <!-- Master Title -->
+        <div class="mt-8">
+          <p class="text-xs md:text-sm font-extrabold tracking-widest uppercase text-blue-600 mb-2">Product Management Case Study + Strategic PRD</p>
+          <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.05]">
+            Zerodha: How a Late Entrant <br class="hidden sm:block"/>
+            <span class="text-blue-600">Out-Priced</span> and <span class="text-emerald-600">Out-Lasted</span> the Incumbents
+          </h1>
+          <p class="mt-6 text-base sm:text-xl text-slate-600 max-w-3xl leading-relaxed">
+            In 2010, fifteen years after Sharekhan and a decade after ICICI Direct, two brothers launched a broker with <b>no venture capital</b> and <b>zero marketing spend</b>. By turning pricing into the product with a flat ₹20 fee, they captured India's retail trading for a decade—before facing the fragility of a single-pool profit moat.
+          </p>
+        </div>
+
+        <!-- 4 Hero Flagship Metrics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+          <div class="hero-stat" style="--ac:var(--zerodha-blue)">
+            <span class="num">₹8,847 Cr</span>
+            <span class="lbl">FY25 Consolidated Revenue</span>
+            <span class="text-[11px] text-rose-500 font-bold mt-1 block">&darr; 11.5% YoY (F&O Shift)</span>
+          </div>
+          <div class="hero-stat" style="--ac:var(--emerald)">
+            <span class="num">₹4,237 Cr</span>
+            <span class="lbl">FY25 Net Profit</span>
+            <span class="text-[11px] text-slate-500 font-semibold mt-1 block">47.9% Pristine Margin</span>
+          </div>
+          <div class="hero-stat" style="--ac:#0284C7">
+            <span class="num">₹22,679 Cr</span>
+            <span class="lbl">Cash & Bank Reserves</span>
+            <span class="text-[11px] text-emerald-600 font-bold mt-1 block">Zero Debt Fortress</span>
+          </div>
+          <div class="hero-stat" style="--ac:var(--violet)">
+            <span class="num">6.76 M</span>
+            <span class="lbl">NSE Active Clients (Jul 2026)</span>
+            <span class="text-[11px] text-amber-600 font-bold mt-1 block">14.9% Share (Rank #2)</span>
+          </div>
+        </div>
+
+        <!-- Interactive Quick Navigation Pills -->
+        <div class="flex flex-wrap items-center gap-2.5 mt-8 pt-6 border-t border-slate-200">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2">Jump to:</span>
+          <a href="#summary" class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-500 hover:text-blue-600 transition">1. Executive Summary</a>
+          <a href="#strategy" class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:border-emerald-500 hover:text-emerald-600 transition">3. Strategy Matrix</a>
+          <a href="#finance" class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:border-sky-500 hover:text-sky-600 transition">4. Financial Performance</a>
+          <a href="#competition" class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:border-violet-500 hover:text-violet-600 transition">5. Zerodha vs Groww</a>
+          <a href="#prd" class="px-3.5 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-xs font-bold text-blue-700 hover:bg-blue-600 hover:text-white transition">7. Kite Start PRD Proposal &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SECTION 1: EXECUTIVE SUMMARY
+         ============================================================== -->
+    <div class="sec-divider"><span class="sd-idx">01</span><span class="sd-name">Executive Summary</span><span class="sd-line"></span></div>
+    <section id="summary" data-nav="1. Summary">
+      <div class="reveal">
+        <span class="eyebrow">The Business Model Revolution</span>
+        <h2>How pricing became the product</h2>
+        
+        <div class="glass p-6 md:p-8 mt-6">
+          <p class="text-lg md:text-xl text-slate-700 leading-relaxed font-medium">
+            Zerodha launched in 2010, fifteen years after Sharekhan and a decade after ICICI Direct, in a market where full-service bank-linked brokers charged an exorbitant percentage (0.25% - 0.50%) on every trade. Zerodha won by making price a product: <b class="text-blue-600">a flat ₹20 fee per order</b>, later <b>zero on equity delivery</b>, backed by a lightning-fast trading app (Kite) and free transparent education (Varsity).
+          </p>
+          <div class="grid md:grid-cols-3 gap-5 mt-6 pt-6 border-t border-slate-100">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Zero Venture Money</span>
+              <p class="text-sm text-slate-600 mt-1">Bootstrapped from day one. Never raised a dollar of external dilution, ensuring total strategic independence.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Organic CAC</span>
+              <p class="text-sm text-slate-600 mt-1">Zero sub-brokers, zero paid digital advertising. Driven entirely by referral incentives and loyal active trader word-of-mouth.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">The Moat Dilemma</span>
+              <p class="text-sm text-slate-600 mt-1">Lost the #1 client crown to Groww in late 2023. SEBI F&O regulations revealed heavy profit pool concentration risk.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Executive Summary Paradox Callout -->
+        <div class="grid md:grid-cols-2 gap-6 mt-6">
+          <div class="card3d" style="border-left: 4px solid var(--emerald)">
+            <p class="text-xs font-bold uppercase tracking-wider text-emerald-600">The 2010–2022 Playbook (Why it succeeded)</p>
+            <h4 class="text-xl mt-2 text-slate-900">Unbundling Incumbent Economics</h4>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              Full-service brokers subsidised massive physical branches and branch relationship managers by taxing large trade volumes. Zerodha attacked their unit economics with in-house technology, eliminating relationship managers entirely and returning that surplus back to traders.
+            </p>
+          </div>
+          <div class="card3d" style="border-left: 4px solid var(--crimson)">
+            <p class="text-xs font-bold uppercase tracking-wider text-rose-600">The 2024–2026 Reality (The Fragile Moat)</p>
+            <h4 class="text-xl mt-2 text-slate-900">Derivative Concentration & The Beginner Pivot</h4>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              Because equity delivery was free, ~80%+ of Zerodha's revenue came from F&O intraday orders. When SEBI tightened STT and reduced weekly expiries, profits dropped 22.9%. Meanwhile, beginner-friendly Groww captured millions through mutual funds and simpler onboarding.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <span class="kw">Disruptive Innovation</span>
+          <span class="kw">Zero CAC</span>
+          <span class="kw">Concentration Risk</span>
+          <span class="kw">Regulatory Headwinds</span>
+          <span class="kw">Unbundling</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SECTION 2: CONTEXT & MARKET GAP
+         ============================================================== -->
+    <div class="sec-divider"><span class="sd-idx">02</span><span class="sd-name">Context & Market Shift</span><span class="sd-line"></span></div>
+    <section id="context" data-nav="2. Context & Gap">
+      <div class="reveal">
+        <span class="eyebrow">Market Dynamics</span>
+        <h2>A late entrant in a crowded market</h2>
+        <p class="text-lg text-slate-600 mt-2 max-w-3xl">
+          Discount broking wasn't invented by Zerodha—what was invented was an unassailable digital cost structure aligned with three macro tailwinds.
+        </p>
+
+        <!-- Incumbent vs Gap vs Tailwinds -->
+        <div class="grid md:grid-cols-3 gap-5 mt-8">
+          <div class="card3d">
+            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-lg mb-3">1</div>
+            <h3 class="text-xl font-bold">The Incumbents</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              ICICI Direct, HDFC Securities, Kotak, and Sharekhan charged up to <b>0.5% per trade</b>. A ₹1,00,000 intraday position cost ₹500 in brokerage each way, forcing traders to gamble on wide spreads just to break even.
+            </p>
+          </div>
+          <div class="card3d">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg mb-3">2</div>
+            <h3 class="text-xl font-bold">The Structural Gap</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              High-frequency day traders were subsidizing passive bank depositors. First-time retail investors had no trustworthy, jargon-free terminal or transparent financial education to start their journeys.
+            </p>
+          </div>
+          <div class="card3d">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg mb-3">3</div>
+            <h3 class="text-xl font-bold">The India Stack</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              Aadhaar e-KYC compressed account opening from 7 business days with physical paperwork to 10 minutes. UPI enabled instant account funding, and cheap 4G data opened Tier-2 and Tier-3 trading.
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive CLSA Chart: Discount Brokers' Share of NSE Active Clients -->
+        <div class="glass p-6 md:p-8 mt-8">
+          <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Historical Shift</p>
+              <h3 class="text-2xl font-bold text-slate-900">Discount Brokers' Share of NSE Active Clients</h3>
+            </div>
+            <span class="text-xs text-slate-500 font-semibold">Source: CLSA Report via Business Standard</span>
+          </div>
+
+          <!-- Dynamic SVG Chart -->
+          <div class="w-full overflow-x-auto mt-4">
+            <svg id="svg-discount-share" viewBox="0 0 860 260" class="w-full h-auto min-w-[650px]"></svg>
+          </div>
+          <div class="flex items-center justify-between text-xs text-slate-500 mt-4 border-t border-slate-100 pt-3">
+            <span>2015: Discount brokers accounted for &lt; 5%</span>
+            <span class="font-bold text-emerald-600">2026: Discount brokers command &gt; 65% of all active NSE clients</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SECTION 3: STRATEGY MATRIX
+         ============================================================== -->
+    <div class="sec-divider"><span class="sd-idx">03</span><span class="sd-name">Strategy & Levers</span><span class="sd-line"></span></div>
+    <section id="strategy" data-nav="3. Strategy">
+      <div class="reveal">
+        <span class="eyebrow">Strategic Execution</span>
+        <h2>How Zerodha captured the market</h2>
+        <p class="text-lg text-slate-600 mt-2 max-w-3xl">
+          Six synchronized operational levers that turned a 10-person bootstrapped startup into India's most profitable brokerage.
+        </p>
+
+        <!-- Strategy Table with Interactive Row Hover -->
+        <div class="glass p-5 md:p-6 mt-8 overflow-x-auto">
+          <table id="strategy-table">
+            <thead>
+              <tr>
+                <th style="width: 18%;">Lever</th>
+                <th style="width: 42%;">What Zerodha Did</th>
+                <th style="width: 40%;">Why It Worked</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-bold text-blue-600">1. Pricing</td>
+                <td>Flat ₹20-per-order cap on intraday and F&O from launch; <b>zero brokerage on equity delivery</b> (from 2015).</td>
+                <td>Heavy volume traders saved lakhs annually and became vocal, evangelist advocates. Radical simplicity made marketing unnecessary.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-emerald-600">2. Product</td>
+                <td>Kite (minimal web/mobile terminal), Console (backoffice analytics), Coin (zero-commission direct mutual funds).</td>
+                <td>Fast, sub-second execution speed and clean typography versus clunky 90s Java applets run by legacy banks.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-sky-600">3. Distribution</td>
+                <td>No physical branches, no sub-broker franchises, zero paid Google/IPL ads. Pure referral incentive loops.</td>
+                <td>Ultra-low Client Acquisition Cost (CAC) allowed margins to stay sky-high while offering ₹0 delivery.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-amber-600">4. Trust & Education</td>
+                <td>Varsity: completely free, open-access, high-quality trading modules; founder transparency blogs.</td>
+                <td>Built lifelong loyalty with new market entrants before they made their first trade, bypassing ad skepticism.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-violet-600">5. Cost Discipline</td>
+                <td>Extremely lean tech team, in-house servers, zero external board interference or growth-at-all-costs vanity metrics.</td>
+                <td>Sustained consolidated net profit margins above 50% during peak bull cycle without needing capital infusions.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-rose-600">6. Ecosystem</td>
+                <td>Rainmatter Fund & Foundation: early-stage capital invested into Sensibull, Streak, Tijori, smallcase, and Dittoo.</td>
+                <td>Expanded the entire Indian fintech category and embedded partner tools seamlessly into Kite's trading flow.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         CINEMATIC DEPTH-SCROLL TIMELINE: The Evolution of Zerodha
+         ============================================================== -->
+    <section id="timeline" data-nav="Timeline" class="dz-fallback">
+      <div class="dz-fb-head">
+        <span class="eyebrow" style="color:var(--amber)">Interactive Timeline</span>
+        <h2 class="text-slate-900">From Late Entrant to #1, and the Battle for Retention</h2>
+        <p class="text-slate-600 mt-2">Scroll to travel through the 6 definitive eras of Zerodha's 16-year trajectory.</p>
+      </div>
+      <div id="dz-pin">
+        <canvas id="dz-particles"></canvas>
+        <div id="dz-stage">
+
+          <!-- Card 1: 2010 Launch -->
+          <article class="dz-card" data-i="0" data-surface="light" data-mood="The Genesis (2010)" data-label="2010" style="--acc:#387ED1">
+            <div><span class="dzc-kicker">01 &middot; Bootstrapped Inception &nbsp; 2010</span></div>
+            <h3 class="dzc-title">The Flat ₹20 Revolution</h3>
+            <p class="dzc-lead">Nithin and Nikhil Kamath founded Zerodha with zero funding in Bangalore, introducing a flat ₹20 fee while incumbents charged 0.5%.</p>
+            <div class="dzc-body">
+              <div class="dzc-viz">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Cost of a ₹5 Lakh Intraday Trade</p>
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                      <span>ICICI Direct / HDFC Sec (0.25% - 0.50%)</span>
+                      <span class="text-rose-600">₹1,250 - ₹2,500</span>
+                    </div>
+                    <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                      <div class="bg-rose-500 h-full w-[95%]"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                      <span>Zerodha Flat Cap</span>
+                      <span class="text-emerald-600 font-extrabold">₹20.00</span>
+                    </div>
+                    <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                      <div class="bg-emerald-500 h-full w-[2%]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="dzc-grid">
+                <div class="dzc-block"><span class="k">Key Play</span><b>Flat ₹20 Fee</b><span>Saved active traders 90%+ in fees</span></div>
+                <div class="dzc-block"><span class="k">Capital</span><b>₹0 Dilution</b><span>Bootstrapped personal savings</span></div>
+                <div class="dzc-block"><span class="k">Target</span><b>Day Traders</b><span>High-volume early adopters</span></div>
+                <div class="dzc-block"><span class="k">Moat</span><b>Cost Structure</b><span>No branches or sales teams</span></div>
+              </div>
+            </div>
+            <p class="dzc-lesson"><span class="k">PM Insight</span>When you unbundle an incumbent's profit subsidy, your price becomes your greatest marketing asset.</p>
+          </article>
+
+          <!-- Card 2: 2015 Zero Delivery -->
+          <article class="dz-card" data-i="1" data-surface="light" data-mood="Product Mastery (2015-17)" data-label="2015" style="--acc:#10B981">
+            <div><span class="dzc-kicker">02 &middot; Product Inflection &nbsp; 2015–2017</span></div>
+            <h3 class="dzc-title">Zero Brokerage Delivery & Kite</h3>
+            <p class="dzc-lead">In 2015, Zerodha made equity delivery permanently ₹0 and launched Kite—a lightning-fast web terminal built in HTML5.</p>
+            <div class="dzc-body">
+              <div class="dzc-viz">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ecosystem Flywheel Expansion</p>
+                <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+                  <div class="p-2.5 bg-blue-50 text-blue-800 rounded-lg border border-blue-200"><b>Kite Web/Mobile</b><br/>Sub-second execution</div>
+                  <div class="p-2.5 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200"><b>Console & Coin</b><br/>Zero-comm direct MF</div>
+                  <div class="p-2.5 bg-amber-50 text-amber-800 rounded-lg border border-amber-200"><b>Varsity</b><br/>Free investor education</div>
+                  <div class="p-2.5 bg-violet-50 text-violet-800 rounded-lg border border-violet-200"><b>Rainmatter</b><br/>Fintech ecosystem fund</div>
+                </div>
+              </div>
+              <div class="dzc-grid">
+                <div class="dzc-block"><span class="k">Innovation</span><b>Kite Terminal</b><span>Replaced clunky Java applets</span></div>
+                <div class="dzc-block"><span class="k">Delivery</span><b>₹0 Brokerage</b><span>Free equity investment for all</span></div>
+                <div class="dzc-block"><span class="k">Education</span><b>Varsity Launch</b><span>Millions taught financial literacy</span></div>
+                <div class="dzc-block"><span class="k">Ecosystem</span><b>Coin (Direct MF)</b><span>Eliminated regular distributor cuts</span></div>
+              </div>
+            </div>
+            <p class="dzc-lesson"><span class="k">PM Insight</span>Zero pricing on long-term delivery created goodwill that brought massive intraday and derivative volumes.</p>
+          </article>
+
+          <!-- Card 3: 2020 Covid Boom -->
+          <article class="dz-card" data-i="2" data-surface="light" data-mood="The Supercycle (2020-22)" data-label="2020" style="--acc:#0EA5E9">
+            <div><span class="dzc-kicker">03 &middot; The Market Supercycle &nbsp; 2020–2022</span></div>
+            <h3 class="dzc-title">Lockdowns, UPI, & Peak Scale</h3>
+            <p class="dzc-lead">As retail participation exploded during pandemic lockdowns, Zerodha became India's undisputed #1 broker with over 8 million clients.</p>
+            <div class="dzc-body">
+              <div class="dzc-viz">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Market Share Surge (NSE Active)</p>
+                <div class="flex items-end gap-4 h-28 pt-4 px-2">
+                  <div class="flex-1 flex flex-col items-center h-full justify-end">
+                    <span class="text-xs font-bold text-slate-500 mb-1 dz-fade-in"><span class="tl-counter" data-target="5" data-suffix="%">0%</span></span>
+                    <div class="w-full bg-slate-100 rounded-t h-full flex items-end">
+                      <div class="w-full bg-blue-300 rounded-t dz-bar-grow" style="--target-h:25%;"></div>
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-1 font-semibold">2017</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center h-full justify-end">
+                    <span class="text-xs font-bold text-blue-600 mb-1 dz-fade-in"><span class="tl-counter" data-target="12" data-suffix="%">0%</span></span>
+                    <div class="w-full bg-slate-100 rounded-t h-full flex items-end">
+                      <div class="w-full bg-blue-400 rounded-t dz-bar-grow" style="--target-h:55%;"></div>
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-1 font-semibold">2019</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center h-full justify-end">
+                    <span class="text-xs font-bold text-emerald-600 mb-1 dz-fade-in"><span class="tl-counter" data-target="19.5" data-decimals="1" data-suffix="%">0%</span></span>
+                    <div class="w-full bg-slate-100 rounded-t h-full flex items-end">
+                      <div class="w-full bg-emerald-500 rounded-t dz-bar-grow" style="--target-h:95%;"></div>
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-1 font-semibold">2021</span>
+                  </div>
+                </div>
+              </div>
+              <div class="dzc-grid">
+                <div class="dzc-block"><span class="k">Metric</span><b>8M+ Demat Accounts</b><span>Leading all Indian institutions</span></div>
+                <div class="dzc-block"><span class="k">Profitability</span><b>&gt; 50% Net Margin</b><span>₹2,000+ Cr yearly net profit</span></div>
+                <div class="dzc-block"><span class="k">Infrastructure</span><b>Server Resilience</b><span>Handled 10M+ daily orders</span></div>
+                <div class="dzc-block"><span class="k">Brand</span><b>Household Name</b><span>Synonymous with Indian trading</span></div>
+              </div>
+            </div>
+            <p class="dzc-lesson"><span class="k">PM Insight</span>Network effects in finance are driven by uptime, speed, and trust. Bootstrapping protected them from chasing toxic growth.</p>
+          </article>
+
+          <!-- Card 4: Oct 2023 - Groww takes the Lead -->
+          <article class="dz-card" data-i="3" data-surface="light" data-mood="The Pivot (2023)" data-label="2023" style="--acc:#F59E0B">
+            <div><span class="dzc-kicker">04 &middot; The Changing of the Guard &nbsp; Oct 2023</span></div>
+            <h3 class="dzc-title">Groww Takes the #1 Spot</h3>
+            <p class="dzc-lead">In October 2023, direct-to-consumer rival Groww surpassed Zerodha in active NSE clients, riding mutual funds and consumer-first UX.</p>
+            <div class="dzc-body">
+              <div class="dzc-viz">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Active NSE Client Flip (Millions)</p>
+                <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs">
+                  <div class="flex justify-between py-1 border-b border-amber-200">
+                    <span class="text-slate-600">Early 2023:</span>
+                    <span>Zerodha: <b>6.4M</b> | Groww: <b>5.2M</b></span>
+                  </div>
+                  <div class="flex justify-between py-1 border-b border-amber-200 font-bold text-amber-800">
+                    <span>Oct 2023 (Flip):</span>
+                    <span>Groww: <b>6.63M</b> | Zerodha: <b>6.48M</b></span>
+                  </div>
+                  <div class="flex justify-between py-1 text-slate-800">
+                    <span>Jul 2026:</span>
+                    <span>Groww: <b class="text-emerald-700">13.12M</b> | Zerodha: <b>6.76M</b></span>
+                  </div>
+                </div>
+              </div>
+              <div class="dzc-grid">
+                <div class="dzc-block"><span class="k">Driver</span><b>Simpler Onboarding</b><span>DTC mobile app built for Gen Z</span></div>
+                <div class="dzc-block"><span class="k">Funnel</span><b>Mutual Fund Hook</b><span>Converts SIP savers into equity</span></div>
+                <div class="dzc-block"><span class="k">Zerodha Friction</span><b>Account Fee & Clutter</b><span>Pro trading tools intimidated newcomers</span></div>
+                <div class="dzc-block"><span class="k">Outcome</span><b>Groww Widens Gap</b><span>Groww client count reaches 2x Zerodha</span></div>
+              </div>
+            </div>
+            <p class="dzc-lesson"><span class="k">PM Insight</span>The user who made you #1 is rarely the same user who keeps you #1. Groww won the next cohort of investors.</p>
+          </article>
+
+          <!-- Card 5: FY25-26 Regulatory Squeeze -->
+          <article class="dz-card" data-i="4" data-surface="dark" data-mood="The Regulatory Shock (2025-26)" data-label="2025-26" style="--acc:#EF4444">
+            <div><span class="dzc-kicker">05 &middot; The Regulatory Shock &nbsp; FY25–FY26</span></div>
+            <h3 class="dzc-title">SEBI F&O Restrictions & Margin Squeeze</h3>
+            <p class="dzc-lead">New SEBI rules on index derivatives—higher STT, reduced weekly expiries, and rebate removals—hit Zerodha's main profit pool.</p>
+            <div class="dzc-body">
+              <div class="dzc-viz">
+                <p class="text-xs font-bold text-rose-400 uppercase tracking-wider mb-2">FY25 Financial Impact on Zerodha</p>
+                <div class="space-y-3.5">
+                  <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                      <span>Revenue: ₹10,000 Cr &rarr; ₹8,847 Cr</span>
+                      <span class="text-rose-400 font-bold"><span class="tl-counter" data-target="-11.5" data-decimals="1" data-suffix="%">0%</span></span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                      <div class="bg-rose-500 h-full rounded-full dz-hbar-grow" style="--target-w:88.5%;"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                      <span>Net Profit: ₹5,500 Cr &rarr; ₹4,237 Cr</span>
+                      <span class="text-rose-400 font-bold"><span class="tl-counter" data-target="-22.9" data-decimals="1" data-suffix="%">0%</span></span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                      <div class="bg-rose-500 h-full rounded-full dz-hbar-grow" style="--target-w:77.1%;"></div>
+                    </div>
+                  </div>
+                  <p class="text-[11px] text-slate-400 mt-2">Kamath reports brokerage revenue down ~40% YoY in June 2025; delivery fees reconsidered.</p>
+                </div>
+              </div>
+              <div class="dzc-grid">
+                <div class="dzc-block"><span class="k">SEBI Shift</span><b>Fewer Expiries</b><span>Index derivative volumes curbed</span></div>
+                <div class="dzc-block"><span class="k">Tax Hike</span><b>Higher STT</b><span>Increased friction on active traders</span></div>
+                <div class="dzc-block"><span class="k">Rebates</span><b>Exchange Rebates Cut</b><span>True-to-label fee mandates</span></div>
+                <div class="dzc-block"><span class="k">Dilemma</span><b>End ₹0 Delivery?</b><span>Considering charging for equity delivery</span></div>
+              </div>
+            </div>
+            <p class="dzc-lesson"><span class="k">PM Insight</span>When your entire profit pool leans on a single high-margin regulatory gray zone, policy shifts move the entire P&L.</p>
+          </article>
+
+          <!-- Card 6: 2026 Fortress & Repositioning -->
+          <article class="dz-card" data-i="5" data-surface="light" data-mood="The Counter-Attack (2026+)" data-label="2026+" style="--acc:#00D09C">
+            <div><span class="dzc-kicker">06 &middot; The Fortress Balance Sheet &nbsp; 2026+</span></div>
+            <h3 class="dzc-title">₹22,679 Cr Cash & Kite Start</h3>
+            <p class="dzc-lead">With zero debt and massive capital reserves, Zerodha has the runway to counter Groww by reimagining beginner onboarding.</p>
+            <div class="dzc-body">
+              <div class="dzc-viz">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Balance Sheet Fortress</p>
+                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                  <span class="text-3xl font-extrabold text-emerald-700">₹22,679 Cr</span>
+                  <p class="text-xs text-emerald-800 font-semibold mt-1">Cash and equivalent reserves on balance sheet (FY25).</p>
+                  <p class="text-xs text-slate-600 mt-2">Unparalleled strategic cushion to fund new product pivots, weather down-cycles, and build subscription revenue.</p>
+                </div>
+              </div>
+              <div class="dzc-grid">
+                <div class="dzc-block"><span class="k">Pillar</span><b>Rainmatter Startups</b><span>Deep investments in wealth tech</span></div>
+                <div class="dzc-block"><span class="k">Proposal</span><b>Kite Start PRD</b><span>Beginner-first onboarding & SIPs</span></div>
+                <div class="dzc-block"><span class="k">Subscription</span><b>Paid Analytics</b><span>Diversifying away from transaction fees</span></div>
+                <div class="dzc-block"><span class="k">Goal</span><b>Stop Client Erosion</b><span>Stabilize active client market share</span></div>
+              </div>
+            </div>
+            <p class="dzc-lesson"><span class="k">PM Insight</span>A fortress balance sheet buys time to fix UX debt and build recurring, non-derivative revenues.</p>
+          </article>
+
+        </div>
+        <div id="dz-hud">
+          <div id="dz-top">
+            <div class="e">Interactive Timeline &middot; 2010 to 2026</div>
+            <div id="dz-mood">The Genesis (2010)</div>
+          </div>
+          <div id="dz-rail"></div>
+          <div id="dz-prog"><i></i></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SECTION 4: FINANCIAL PERFORMANCE
+         ============================================================== -->
+    <div class="sec-divider"><span class="sd-idx">04</span><span class="sd-name">Financial Performance</span><span class="sd-line"></span></div>
+    <section id="finance" data-nav="4. Financials">
+      <div class="reveal">
+        <span class="eyebrow">Financial Unit Economics <span class="text-slate-400 font-normal">· Consolidated Model</span></span>
+        <h2>Revenue vs net profit: the consolidated picture</h2>
+        <p class="text-lg text-slate-600 mt-2 max-w-3xl">
+          <b class="text-slate-900">The takeaway in one line:</b> Even with FY25 net profit of <b class="text-emerald-600">₹4,237 Cr</b> (47.9% net margin), Zerodha's revenue fell 11.5% and profit fell 22.9% as SEBI's F&O regulations compressed its primary profit pool. The charts below display the full operational unit economics and revenue diversification.
+        </p>
+
+        <!-- Benchmark-style Financial Row: Left P&L Bar Stack + Right Revenue Mix Donut -->
+        <div class="grid lg:grid-cols-2 gap-6 mt-8 items-start">
+          
+          <!-- P&L Bar Stack (Revenue vs Cost) matching Image 5 -->
+          <div class="glass p-6 md:p-7">
+            <div class="flex items-baseline justify-between flex-wrap gap-2">
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Profit &amp; Loss &middot; Revenue vs Cost</p>
+              <span class="text-xs text-slate-400 font-semibold">₹ Crore (Consolidated)</span>
+            </div>
+            
+            <!-- Scenario Segmented Buttons -->
+            <div class="fin-scn-row mt-3" id="scenario-btns" role="tablist" aria-label="P&L scenario">
+              <button class="fin-scn" data-scn="fy24">FY24 Peak</button>
+              <button class="fin-scn on" data-scn="fy25">FY25 Current</button>
+              <button class="fin-scn" data-scn="fy26">FY26 Projected</button>
+            </div>
+
+            <!-- SVG Stacked Bars -->
+            <div id="pnl-svg" class="w-full max-w-[460px] mx-auto mt-4"></div>
+
+            <!-- Net Callout & Sourced Basis Breakdown -->
+            <div id="pnl-table" class="mt-4"></div>
+          </div>
+
+          <!-- Revenue Mix 3D Donut matching Image 5 -->
+          <div class="glass p-6 md:p-7">
+            <div class="flex items-baseline justify-between flex-wrap gap-2">
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Revenue Mix</p>
+              <span class="text-xs text-slate-400 font-semibold">FY25 Consolidated Basis</span>
+            </div>
+            
+            <!-- SVG Donut Chart with hover interactions -->
+            <div id="donut-svg" class="w-full max-w-[260px] mx-auto mt-4"></div>
+            <div id="donut-legend" class="flex flex-col gap-2.5 mt-5"></div>
+          </div>
+
+        </div>
+
+        <!-- Cost Breakdown Bar matching benchmark -->
+        <div class="glass p-6 md:p-7 mt-6">
+          <div class="flex items-baseline justify-between flex-wrap gap-2">
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Expense Breakdown &amp; Cost Structure</p>
+            <span class="text-xs text-slate-400 font-semibold">Consolidated FY25 (₹4,610 Cr total expenses)</span>
+          </div>
+          <div class="flex h-14 rounded-2xl overflow-hidden border border-slate-200 mt-3 shadow-inner">
+            <div class="flex flex-col items-center justify-center text-white font-bold leading-tight" style="width:58%; background:#EF4444;" title="Transaction & Regulatory Charges">
+              <span class="text-[11px] font-medium opacity-90">Exchange &amp; SEBI Charges</span>
+              <span class="text-sm font-extrabold">₹2,674 Cr</span>
+            </div>
+            <div class="flex flex-col items-center justify-center text-white font-bold leading-tight" style="width:22%; background:#387ED1;" title="Employee Benefit Expenses">
+              <span class="text-[11px] font-medium opacity-90">Team &amp; Tech Pool</span>
+              <span class="text-sm font-extrabold">₹1,014 Cr</span>
+            </div>
+            <div class="flex flex-col items-center justify-center text-white font-bold leading-tight" style="width:20%; background:#F59E0B;" title="IT, Hosting & Other Ops">
+              <span class="text-[11px] font-medium opacity-90">Hosting &amp; Ops</span>
+              <span class="text-sm font-extrabold">₹922 Cr</span>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4 mt-4 pt-3 border-t border-slate-100 text-xs">
+            <div>
+              <p class="font-bold text-slate-900 flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Regulatory &amp; Exchange (58%)</p>
+              <p class="text-slate-500 mt-1">Direct pass-through STT, stamp duty, exchange transaction fees, and SEBI turnover turnover taxes.</p>
+            </div>
+            <div>
+              <p class="font-bold text-slate-900 flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> Employee &amp; Tech Pool (22%)</p>
+              <p class="text-slate-500 mt-1">Extremely lean organization of ~1,200 employees; high ESOP allocation and engineering bonuses.</p>
+            </div>
+            <div>
+              <p class="font-bold text-slate-900 flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> In-House Infra &amp; Ops (20%)</p>
+              <p class="text-slate-500 mt-1">Dedicated data centers, leased line connectivity, compliance audits, and customer support.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Founder Commentary Callout -->
+        <div class="glass p-6 border-l-4 border-amber-500 mt-6">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-amber-700">Founder Disclosure &amp; Headwinds</span>
+          <h4 class="text-base font-bold text-slate-900 mt-1">Kamath on the 40% Brokerage Revenue Drop</h4>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            Nithin Kamath reported brokerage revenue dropped roughly <b>40% year-on-year in June 2025</b> due to SEBI's increased STT, basic demat limits, and removal of exchange transaction rebates. Zerodha publicly confirmed it is actively reviewing whether to end its signature <b>free delivery trading model</b>.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SECTION 5: COMPETITIVE LANDSCAPE
+         ============================================================== -->
+    <div class="sec-divider"><span class="sd-idx">05</span><span class="sd-name">Competitive Landscape</span><span class="sd-line"></span></div>
+    <section id="competition" data-nav="5. Competition">
+      <div class="reveal">
+        <span class="eyebrow">Market Share & Rivalry</span>
+        <h2>Active NSE clients: Zerodha vs rivals</h2>
+        <p class="text-lg text-slate-600 mt-2 max-w-3xl">
+          Active NSE clients fell 7% industry-wide to 4.57 crore in FY26. Here is how Zerodha compares with Groww, Angel One, and legacy banks as of July 2026.
+        </p>
+
+        <!-- Benchmark Comparison Table -->
+        <div class="glass p-5 md:p-6 mt-8 overflow-x-auto">
+          <table id="comp-table">
+            <thead>
+              <tr>
+                <th>Competitor</th>
+                <th>Active Clients (Jul 2026)</th>
+                <th>Market Trajectory</th>
+                <th>Position vs Zerodha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="bg-emerald-50/50">
+                <td class="font-bold text-emerald-800 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Groww
+                </td>
+                <td class="font-extrabold text-slate-900">13.12 M</td>
+                <td class="win">&uarr; Steady Client Gains</td>
+                <td>Direct-to-consumer, beginner-friendly app, low friction. Surpassed Zerodha in Oct 2023; now holds roughly 2x client count.</td>
+              </tr>
+              <tr class="bg-blue-50/60 font-semibold">
+                <td class="font-bold text-blue-800 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> Zerodha
+                </td>
+                <td class="font-extrabold text-blue-900">6.76 M</td>
+                <td class="lose">&darr; -89,700 YTD (Jul 2026)</td>
+                <td><b>Most profitable broker in India</b> (₹4,237 Cr profit). High average revenue per user (ARPU), but facing erosion in total user count.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-800">Angel One</td>
+                <td class="font-extrabold text-slate-800">6.63 M</td>
+                <td class="win">&uarr; Rapid Sub-Broker Expansion</td>
+                <td>Heavy sub-broker distribution in Tier-2/3 cities. Virtually level with Zerodha on active client count.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-800">Upstox</td>
+                <td class="font-extrabold text-slate-700">1.86 M</td>
+                <td class="lose">&darr; Losing Market Share</td>
+                <td>Backed by Ratan Tata and Tiger Global; struggled to sustain momentum post-2022 marketing pullback.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-800">ICICI Direct / HDFC / Kotak</td>
+                <td class="font-extrabold text-slate-700">~1.4M – 1.9M each</td>
+                <td class="text-slate-500">Stagnant / Wealth Migration</td>
+                <td>Bank-linked full-service brokers. Slower to unbundle fees; relying on high-net-worth 3-in-1 account linkages.</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-800">Dhan</td>
+                <td class="font-extrabold text-slate-700">~0.9M – 1.0M</td>
+                <td class="win">&uarr; Niche Pro-Trader Growth</td>
+                <td>Fast-growing challenger catering specifically to pro options and algorithmic traders with TradingView integrations.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Visual Bar Comparison -->
+        <div class="glass p-6 mt-8">
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Active NSE Client Share Visualization (July 2026 Data)</p>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span class="text-emerald-700 font-extrabold">Groww &mdash; 13.12M</span>
+                <span class="text-emerald-700">28.7% NSE Share</span>
+              </div>
+              <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full w-[100%] transition-all duration-1000"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span class="text-blue-700 font-extrabold">Zerodha &mdash; 6.76M</span>
+                <span class="text-blue-700">14.9% NSE Share</span>
+              </div>
+              <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                <div class="bg-blue-600 h-full w-[51.5%] transition-all duration-1000"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span class="text-slate-700 font-bold">Angel One &mdash; 6.63M</span>
+                <span class="text-slate-600">14.5% NSE Share</span>
+              </div>
+              <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                <div class="bg-slate-500 h-full w-[50.5%] transition-all duration-1000"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span class="text-slate-500 font-semibold">Upstox &mdash; 1.86M</span>
+                <span class="text-slate-500">4.1% NSE Share</span>
+              </div>
+              <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                <div class="bg-slate-300 h-full w-[14.2%] transition-all duration-1000"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SECTION 6: LESSONS & RISKS
+         ============================================================== -->
+    <div class="sec-divider"><span class="sd-idx">06</span><span class="sd-name">Lessons & Risks</span><span class="sd-line"></span></div>
+    <section id="lessons" data-nav="6. Lessons & Risks">
+      <div class="reveal">
+        <span class="eyebrow" style="color:var(--crimson)">Executive Takeaways</span>
+        <h2>Strategic lessons and vulnerability analysis</h2>
+        <p class="text-lg text-slate-600 mt-2 max-w-3xl">
+          What happens when a price-led moat matures in a shifting regulatory regime?
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-6 mt-8">
+          <div class="card3d border-t-4 border-blue-600">
+            <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Lesson 1</span>
+            <h3 class="text-xl font-bold mt-2 text-slate-900">Attack Economics, Not Just Features</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              Zerodha didn't just build a better app than ICICI Direct; it destroyed their revenue engine by turning a percentage fee into a flat fee. Incumbents could not match it without cannibalizing 80% of their top line.
+            </p>
+          </div>
+
+          <div class="card3d border-t-4 border-rose-500">
+            <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Lesson 2 &middot; Vulnerability</span>
+            <h3 class="text-xl font-bold mt-2 text-slate-900">Derivative Concentration Risk</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              When retail options speculation drove 80%+ of total profits, a single circular from SEBI shifted the entire P&L. A product moat reliant on high-frequency speculation is fragile against consumer protection rules.
+            </p>
+          </div>
+
+          <div class="card3d border-t-4 border-amber-500">
+            <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Lesson 3</span>
+            <h3 class="text-xl font-bold mt-2 text-slate-900">The Next Cohort Differs Fundamentally</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              Zerodha’s original loyalists were active day traders who loved candlestick charts and market depth. The next 50 million Indians entering markets are casual SIP investors who feel overwhelmed by Kite’s advanced order types.
+            </p>
+          </div>
+
+          <div class="card3d border-t-4 border-emerald-600">
+            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Lesson 4 &middot; Moat</span>
+            <h3 class="text-xl font-bold mt-2 text-slate-900">The Fortress Balance Sheet</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              Holding ₹22,679 Cr in liquid cash with zero debt gives Zerodha the supreme luxury of patience. Unlike VC-funded brokers burning capital to retain users, Zerodha can endure market winters and redesign its product deliberately.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SECTION 7: PRD PROPOSAL (KITE START)
+         ============================================================== -->
+    <div class="sec-divider"><span class="sd-idx">07</span><span class="sd-name">PRD: Kite Start</span><span class="sd-line"></span></div>
+    <section id="prd" data-nav="7. Kite Start PRD">
+      <div class="reveal">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <span class="eyebrow">Strategic Product Proposal</span>
+            <h2>PRD: Kite Start &mdash; Beginner-First Onboarding & SIP</h2>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider">Illustrative Case Study Proposal</span>
+        </div>
+        <p class="text-lg text-slate-600 mt-2 max-w-3xl">
+          How Zerodha can reverse active client erosion, counter Groww, and build recurring non-F&O revenues without cluttering Kite for active traders.
+        </p>
+
+        <!-- Problem Statement & Goals -->
+        <div class="grid md:grid-cols-2 gap-6 mt-8">
+          <div class="glass p-6 border-l-4 border-rose-500">
+            <p class="text-xs font-bold uppercase tracking-wider text-rose-600">7.1 Problem Statement</p>
+            <h3 class="text-xl font-bold text-slate-900 mt-1">Client Erosion & Shifting User Behavior</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              Zerodha's active NSE clients dropped from 8.12M (Nov 2024) to 6.76M (Jul 2026), and its market share fell from 16.03% to 14.9% while Groww surged past 13M. First-time investors find Kite's terminal intimidating and are opting for rival apps with clean SIP flows. F&O margin contraction demands new recurring revenue.
+            </p>
+          </div>
+
+          <div class="glass p-6 border-l-4 border-emerald-500">
+            <p class="text-xs font-bold uppercase tracking-wider text-emerald-600">7.2 North Star Goals & Metrics (12 Months)</p>
+            <div class="space-y-2.5 mt-2 text-xs">
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="font-semibold text-slate-700">Win first-time retail investors</span>
+                <span class="font-extrabold text-emerald-600">+25% new accounts placing order in 14 days</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="font-semibold text-slate-700">Build durable recurring revenue</span>
+                <span class="font-extrabold text-blue-600">+40% active SIPs through Coin</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="font-semibold text-slate-700">Stop active client erosion</span>
+                <span class="font-extrabold text-slate-900">Net monthly change from negative to flat/positive</span>
+              </div>
+              <div class="flex justify-between py-1 text-slate-700">
+                <span class="font-semibold">Diversify from derivative dependence</span>
+                <span class="font-extrabold text-violet-600">+10 percentage points non-F&O revenue</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7.3 User Personas (Interactive PPT Switcher) -->
+        <div class="mt-10">
+          <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">7.3 User Archetypes</p>
+              <h3 class="text-2xl font-bold text-slate-900">Who Kite Start is designed for</h3>
+            </div>
+            <div class="persona-tabs" id="prd-persona-tabs">
+              <button class="on" data-p="0">Priya (Tier-2 Starter)</button>
+              <button data-p="1">Rahul (Casual Investor)</button>
+              <button data-p="2">Vikram (Veteran Day Trader)</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Persona Card -->
+          <div id="persona-card" class="glass p-6 md:p-8"></div>
+        </div>
+
+        <!-- 7.4 Feature Specifications & Prioritization (P0, P1, P2) -->
+        <div class="glass p-6 md:p-8 mt-10">
+          <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">7.4 Requirements Spec</p>
+              <h3 class="text-2xl font-bold text-slate-900">Feature Roadmap & Priority Matrix</h3>
+            </div>
+            <div class="flex gap-2 text-xs font-bold">
+              <span class="px-2.5 py-1 rounded bg-rose-100 text-rose-700">P0: Critical Path</span>
+              <span class="px-2.5 py-1 rounded bg-blue-100 text-blue-700">P1: High Impact</span>
+              <span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700">P2: Secondary</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto mt-4">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 8%;">ID</th>
+                  <th style="width: 25%;">Requirement</th>
+                  <th style="width: 12%;">Priority</th>
+                  <th style="width: 55%;">Specification & User Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="font-bold">R1</td>
+                  <td class="font-bold text-blue-900">Guided Onboarding</td>
+                  <td><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 text-xs font-bold">P0</span></td>
+                  <td>Goal selection (save, grow, tax), 60-second risk quiz, and curated starter baskets of index funds and blue chips with 1-click execution.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold">R2</td>
+                  <td class="font-bold text-blue-900">One-Tap UPI SIP</td>
+                  <td><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 text-xs font-bold">P0</span></td>
+                  <td>One-tap SIP setup with UPI Autopay starting from just ₹100, placed front and center on the default home tab.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold">R3</td>
+                  <td class="font-bold text-blue-900">Simple Mode Toggle</td>
+                  <td><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 text-xs font-bold">P0</span></td>
+                  <td>A clean toggle in Kite settings that hides options, futures, and complex order types by default, eliminating visual overwhelm.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold">R4</td>
+                  <td class="font-bold text-blue-900">Varsity Micro-Lessons</td>
+                  <td><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-bold">P1</span></td>
+                  <td>Contextual, bite-sized 90-second cards shown right before placing a first stock, fund, or option trade to avert rookie errors.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold">R5</td>
+                  <td class="font-bold text-blue-900">Unified Portfolio View</td>
+                  <td><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-bold">P1</span></td>
+                  <td>Holistic visual tracker combining stocks, Coin mutual funds, and SGBs with clear plain-language milestone progress charts.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold">R6</td>
+                  <td class="font-bold text-blue-900">Optional Analytics Tier</td>
+                  <td><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-bold">P2</span></td>
+                  <td>Paid monthly subscription for institutional-grade screening and backtesting, replacing reliance on delivery trade fees.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold">R7</td>
+                  <td class="font-bold text-blue-900">SIP Referral Credits</td>
+                  <td><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-bold">P2</span></td>
+                  <td>Existing active clients earn bonus SIP credit matching when referring family members who establish recurring investments.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 7.5 Non-Goals & 7.6 Risk Mitigation -->
+        <div class="grid md:grid-cols-2 gap-6 mt-8">
+          <div class="glass p-6 border-l-4 border-slate-700">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">7.5 Explicit Non-Goals</span>
+            <h4 class="text-lg font-bold text-slate-900 mt-1">What Kite Start Will Never Do</h4>
+            <ul class="space-y-2.5 mt-3 text-sm text-slate-600">
+              <li class="flex items-start gap-2">
+                <span class="text-rose-500 font-bold">&cross;</span>
+                <span><b>No gamified trading:</b> Zero confetti animations, scratch cards, or casino-style visual loops.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-rose-500 font-bold">&cross;</span>
+                <span><b>No push notification nudges:</b> Never send speculative intraday tips or artificially trigger FOMO.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-rose-500 font-bold">&cross;</span>
+                <span><b>No changes to F&O flat pricing:</b> Existing pro traders maintain their exact fee structure with zero disruption.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="glass p-6 border-l-4 border-amber-500">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-600">7.6 Risk & Mitigation Strategy</span>
+            <h4 class="text-lg font-bold text-slate-900 mt-1">Key Product Risks</h4>
+            <ul class="space-y-2.5 mt-3 text-sm text-slate-600">
+              <li>
+                <b class="text-slate-900">Cannibalization Risk:</b> Simple mode might reduce high-margin trader volume. <br/>
+                <span class="text-emerald-700 font-semibold">&rarr; Mitigation:</span> Keep Simple mode purely opt-in for existing users; default to Pro for traders.
+              </li>
+              <li>
+                <b class="text-slate-900">Low SIP ARPU:</b> Mutual funds generate negligible direct revenue. <br/>
+                <span class="text-emerald-700 font-semibold">&rarr; Mitigation:</span> Pair SIP acquisition with premium research subscriptions or MTF facilities.
+              </li>
+              <li>
+                <b class="text-slate-900">Regulatory Shifts:</b> SEBI changes to mutual fund distribution fees. <br/>
+                <span class="text-emerald-700 font-semibold">&rarr; Mitigation:</span> Design revenue architecture to remain resilient under commission caps.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 7.7 Rollout Schedule -->
+        <div class="glass p-6 md:p-8 mt-8">
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">7.7 Phased Rollout Schedule</p>
+          <h3 class="text-xl font-bold text-slate-900 mt-1">12-Month Execution Roadmap</h3>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs font-extrabold text-blue-600">Months 0–2</span>
+              <h4 class="font-bold text-slate-900 mt-1">Discovery & Design</h4>
+              <p class="text-xs text-slate-500 mt-2 leading-relaxed">Qualitative research with Priya & Rahul cohorts; baseline drop-off telemetry; Figma design sprints.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs font-extrabold text-emerald-600">Months 3–5</span>
+              <h4 class="font-bold text-slate-900 mt-1">Core MVP Build</h4>
+              <p class="text-xs text-slate-500 mt-2 leading-relaxed">Implement R1 (Guided Onboarding), R2 (One-Tap UPI SIP), R3 (Simple Mode); kick off internal employee beta.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs font-extrabold text-amber-600">Month 6</span>
+              <h4 class="font-bold text-slate-900 mt-1">A/B Testing Beta</h4>
+              <p class="text-xs text-slate-500 mt-2 leading-relaxed">Roll out to 10% of new sign-ups; A/B test 14-day first-order conversion against legacy flow.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-xs font-extrabold text-violet-600">Months 7–12</span>
+              <h4 class="font-bold text-slate-900 mt-1">Full Scale & Monetization</h4>
+              <p class="text-xs text-slate-500 mt-2 leading-relaxed">100% rollout; release R4 (Varsity Micro-Lessons) and R5 (Unified Portfolio); evaluate paid analytics tier (R6).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Simulator: Toggle Kite UI (Pro Mode vs Kite Start Mode) -->
+        <div class="glass p-6 md:p-8 mt-10" id="simulator-section">
+          <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+            <div>
+              <span class="px-2.5 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider">Interactive UI Simulator</span>
+              <h3 class="text-2xl font-bold text-slate-900 mt-1">Experience the Kite Start Transformation</h3>
+              <p class="text-sm text-slate-600">Toggle between Zerodha's default Pro Terminal and the proposed Kite Start Beginner Experience.</p>
+            </div>
+            <div class="sim-toggle flex rounded-xl bg-slate-100 p-1 border border-slate-300">
+              <button id="sim-btn-pro" type="button" onclick="setSimMode('pro')" class="sim-toggle-btn px-4 py-2 rounded-lg text-xs font-bold transition-all active bg-white text-blue-600 shadow-sm">Kite Pro (Default)</button>
+              <button id="sim-btn-start" type="button" onclick="setSimMode('start')" class="sim-toggle-btn px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900">Kite Start (Proposed)</button>
+            </div>
+          </div>
+
+          <!-- Mock Device Window -->
+          <div class="max-w-2xl mx-auto rounded-2xl border border-slate-300 bg-slate-900 p-3 shadow-2xl">
+            <div class="flex items-center gap-1.5 pb-2.5 px-2 border-b border-slate-800">
+              <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+              <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+              <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+              <span class="text-[11px] text-slate-400 font-mono ml-2" id="sim-url">kite.zerodha.com/terminal/nifty-bank</span>
+            </div>
+            
+            <!-- SIMULATOR CONTAINER -->
+            <div id="sim-display" class="bg-white rounded-xl p-5 min-h-[360px] text-slate-900 mt-2 transition-all duration-300">
+              
+              <!-- VIEW 1: KITE PRO (ACTIVE BY DEFAULT) -->
+              <div id="sim-view-pro" class="sim-view">
+                <div class="border-b border-slate-200 pb-3 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <span class="font-extrabold text-blue-600 text-lg">ZERODHA</span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-slate-100 font-mono font-bold">NIFTY 50 24,850.20 (+0.45%)</span>
+                  </div>
+                  <div class="text-xs font-mono text-slate-500" id="sim-pro-orderpad-label">Order Pad: Intraday MIS &bull; SL-M</div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-4 text-xs font-mono">
+                  <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="font-bold text-slate-700 block mb-2">Market Depth (Level 2)</span>
+                    <div class="flex justify-between text-blue-600"><span>BID: 24,849.50 (1,250)</span><span>ASK: 24,850.50 (2,400)</span></div>
+                    <div class="flex justify-between text-blue-600"><span>BID: 24,848.00 (4,100)</span><span>ASK: 24,851.00 (3,800)</span></div>
+                    <div class="flex justify-between text-blue-600"><span>BID: 24,847.20 (8,900)</span><span>ASK: 24,852.50 (5,120)</span></div>
+                  </div>
+                  <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="font-bold text-slate-700 block mb-2">Order Options (Click to select/deselect)</span>
+                    <div class="flex gap-2 mb-2" id="sim-pro-orders">
+                      <button type="button" onclick="toggleProOrder(0)" class="sim-pro-btn px-2.5 py-1.5 rounded bg-blue-600 text-white font-bold cursor-pointer transition select-none">MIS (Intraday)</button>
+                      <button type="button" onclick="toggleProOrder(1)" class="sim-pro-btn px-2.5 py-1.5 rounded bg-slate-200 text-slate-700 font-semibold cursor-pointer hover:bg-slate-300 transition select-none">CNC</button>
+                      <button type="button" onclick="toggleProOrder(2)" class="sim-pro-btn px-2.5 py-1.5 rounded bg-slate-200 text-slate-700 font-semibold cursor-pointer hover:bg-slate-300 transition select-none">CO/BO</button>
+                    </div>
+                    <p class="text-[11px] text-rose-500 font-sans mt-2">Warning: 9 out of 10 individual traders in equity F&O incur net losses.</p>
+                  </div>
+                </div>
+                <div class="mt-4 p-2.5 rounded bg-amber-50 text-amber-800 text-xs">
+                  <b>User Experience:</b> Built for high-frequency day traders who demand depth, keyboard speed, and instant order triggers.
+                </div>
+              </div>
+
+              <!-- VIEW 2: KITE START (BEGINNER MODE) -->
+              <div id="sim-view-start" class="sim-view hidden">
+                <div class="border-b border-slate-200 pb-3 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="font-extrabold text-blue-600 text-lg">ZERODHA</span>
+                    <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold uppercase tracking-wider">Kite Start Mode</span>
+                  </div>
+                  <div class="text-xs font-semibold text-slate-500" id="sim-start-header-status">Welcome, Priya! &bull; Goal Selected</div>
+                </div>
+                <div class="mt-4">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-lg font-bold text-slate-900">Choose Your Wealth Goal</h4>
+                    <span class="text-[11px] text-slate-500 italic">Click card to select or deselect</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-3 mt-3 text-xs" id="sim-goals-grid">
+                    <div onclick="toggleSimGoal(0)" class="sim-goal-card p-3 rounded-xl border-2 border-blue-500 bg-blue-50/60 shadow-sm cursor-pointer transition-all select-none relative" data-goal="0">
+                      <div class="sim-goal-check absolute top-2 right-2 w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">&check;</div>
+                      <span class="font-bold text-blue-900 block text-sm">Long Term Growth</span>
+                      <p class="text-slate-600 mt-1">Nifty 50 Index Fund</p>
+                      <span class="text-emerald-600 font-extrabold block mt-2">12.4% Historical</span>
+                    </div>
+                    <div onclick="toggleSimGoal(1)" class="sim-goal-card p-3 rounded-xl border border-slate-200 bg-white hover:border-blue-300 cursor-pointer transition-all select-none relative" data-goal="1">
+                      <div class="sim-goal-check absolute top-2 right-2 w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold hidden">&check;</div>
+                      <span class="font-bold text-slate-800 block text-sm">Balanced &amp; Safe</span>
+                      <p class="text-slate-600 mt-1">Equities + Gold Basket</p>
+                      <span class="text-slate-500 font-bold block mt-2">Low Volatility</span>
+                    </div>
+                    <div onclick="toggleSimGoal(2)" class="sim-goal-card p-3 rounded-xl border border-slate-200 bg-white hover:border-blue-300 cursor-pointer transition-all select-none relative" data-goal="2">
+                      <div class="sim-goal-check absolute top-2 right-2 w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold hidden">&check;</div>
+                      <span class="font-bold text-slate-800 block text-sm">Save Taxes</span>
+                      <p class="text-slate-600 mt-1">ELSS Tax Saver Fund</p>
+                      <span class="text-blue-600 font-bold block mt-2">Section 80C</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-5 p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                  <div>
+                    <span class="text-xs text-slate-500 block" id="sim-sip-label">Monthly SIP Investment:</span>
+                    <span class="text-xl font-extrabold text-slate-900" id="sim-sip-amount">₹500 / month</span>
+                  </div>
+                  <button type="button" id="sim-autopay-btn" onclick="triggerSimAutopay()" class="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md hover:bg-emerald-700 transition cursor-pointer select-none">
+                    Setup 1-Tap UPI Autopay &rarr;
+                  </button>
+                </div>
+                <div id="sim-alert-box" class="hidden mt-3 p-3 rounded-lg bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold transition-all">
+                  &check; Success! ₹500/month UPI Autopay mandate approved for Nifty 50 Index Fund.
+                </div>
+                <div class="mt-4 p-2.5 rounded bg-emerald-50 text-emerald-800 text-xs">
+                  <b>User Experience:</b> Zero jargon, zero margin risk, no derivatives. Converts first-time earners into disciplined investors.
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer & Data Caveats -->
+    <footer class="mt-16 pb-12 text-center text-xs text-slate-500 border-t border-slate-200 pt-8 max-w-4xl mx-auto px-6">
+      <p class="font-bold text-slate-700">Data Caveats & Sources:</p>
+      <p class="mt-1 leading-relaxed">
+        Client counts derived from National Stock Exchange (NSE) monthly active-client data as reported by Outlook Business and Entrackr (Oct 2026 / Jul 2026). Financial metrics sourced from RoC filings via Inc42 (FY23) and Entrackr (FY24, FY25). The PRD proposal for "Kite Start" is an illustrative strategic proposal created for product management case analysis and is not an official Zerodha company plan.
+      </p>
+      <p class="mt-4 font-semibold text-slate-400">&copy; 2026 Zerodha Case Study &middot; Inspired by Zee-x-FIFA Benchmark Architecture.</p>
+    </footer>
+
+  </div>
+
+  <!-- Interactive Scripts -->
+  <script>
+    /* ==============================================================
+       1. GLOBAL SCROLL PROGRESS & READING INDICATOR
+       ============================================================== */
+    const progEl = document.getElementById('progress');
+    const readInd = document.getElementById('read-ind');
+    const riIdx = document.getElementById('ri-idx');
+    const riName = document.getElementById('ri-name');
+    const toTop = document.getElementById('toTop');
+    const sections = document.querySelectorAll('section[data-nav]');
+    const sideLinks = document.querySelectorAll('#sidenav a');
+
+    function onScroll() {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const s = window.scrollY;
+      const pct = (s / h) * 100;
+      if (progEl) progEl.style.width = pct + '%';
+      if (toTop) toTop.classList.toggle('show', s > 400);
+
+      // Active Section Detection
+      let cur = '';
+      let curIdx = '01';
+      let curName = 'Overview';
+      sections.forEach((sec, i) => {
+        const top = sec.offsetTop - 120;
+        if (s >= top) {
+          cur = sec.id;
+          curIdx = (i < 9 ? '0' : '') + (i);
+          curName = sec.dataset.nav || sec.id;
+        }
+      });
+
+      if (readInd) {
+        readInd.classList.toggle('show', s > 300);
+        if (riIdx) riIdx.textContent = curIdx;
+        if (riName) riName.textContent = curName;
+      }
+
+      sideLinks.forEach(link => {
+        const match = link.getAttribute('href') === '#' + cur;
+        link.classList.toggle('active', match);
+      });
+
+      // Reveal Animations
+      document.querySelectorAll('.reveal').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight * 0.9) {
+          el.classList.add('in');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('load', onScroll);
+
+    /* ==============================================================
+       2. INTERACTIVE 3D TILT EFFECT
+       ============================================================== */
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.tilt').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const xc = rect.width / 2;
+          const yc = rect.height / 2;
+          const dx = (x - xc) / (rect.width / 2);
+          const dy = (y - yc) / (rect.height / 2);
+          card.style.transform = `perspective(1000px) rotateY(${dx * 3.5}deg) rotateX(${-dy * 3.5}deg)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
+        });
+      });
+    }
+
+    /* ==============================================================
+       3. CLSA DISCOUNT BROKER SHARE CHART (SVG)
+       ============================================================== */
+    function drawDiscountShare() {
+      const svg = document.getElementById('svg-discount-share');
+      if (!svg) return;
+      
+      const data = [
+        { year: '2015', share: 4 },
+        { year: '2017', share: 11 },
+        { year: '2019', share: 23 },
+        { year: '2021', share: 46 },
+        { year: '2023', share: 58 },
+        { year: '2025', share: 64 },
+        { year: '2026', share: 66 }
+      ];
+
+      const W = 860, H = 260, padL = 50, padR = 40, padT = 30, padB = 40;
+      const innerW = W - padL - padR;
+      const innerH = H - padT - padB;
+
+      let html = '';
+      
+      // Grid lines
+      for (let s = 0; s <= 70; s += 15) {
+        const y = padT + innerH - (s / 70) * innerH;
+        html += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#E2E8F0" stroke-width="1" />`;
+        html += `<text x="${padL - 10}" y="${y + 4}" fill="#94A3B8" font-size="11" font-weight="600" text-anchor="end">${s}%</text>`;
+      }
+
+      // Generate Area & Line path
+      const pts = data.map((d, i) => {
+        const x = padL + (i / (data.length - 1)) * innerW;
+        const y = padT + innerH - (d.share / 70) * innerH;
+        return { x, y, ...d };
+      });
+
+      const lineD = pts.reduce((acc, p, i) => i === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`, '');
+      const areaD = `${lineD} L ${pts[pts.length - 1].x} ${padT + innerH} L ${pts[0].x} ${padT + innerH} Z`;
+
+      html += `<defs>
+        <linearGradient id="grad-blue" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#387ED1" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#387ED1" stop-opacity="0.0"/>
+        </linearGradient>
+      </defs>`;
+      
+      html += `<path d="${areaD}" fill="url(#grad-blue)" />`;
+      html += `<path d="${lineD}" fill="none" stroke="#387ED1" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />`;
+
+      // Data Points & Labels
+      pts.forEach(p => {
+        html += `<circle cx="${p.x}" cy="${p.y}" r="5" fill="#FFFFFF" stroke="#387ED1" stroke-width="3" />`;
+        html += `<text x="${p.x}" y="${p.y - 12}" fill="#1E293B" font-size="12" font-weight="800" text-anchor="middle">${p.share}%</text>`;
+        html += `<text x="${p.x}" y="${padT + innerH + 22}" fill="#64748B" font-size="11" font-weight="700" text-anchor="middle">${p.year}</text>`;
+      });
+
+      svg.innerHTML = html;
+    }
+    drawDiscountShare();
+
+    /* ==============================================================
+       4. BENCHMARK FINANCIAL P&L AND 3D DONUT (MATCHING IMAGE 5)
+       ============================================================== */
+    const fmtCr = v => '₹' + (Number.isInteger(v) ? v.toLocaleString() : v.toFixed(1)) + ' Cr';
+
+    // Scenarios for Zerodha: FY24 Peak, FY25 Current, FY26 Projected (SEBI Reform impact)
+    // rev = [F&O Intraday, Interest & Float, Tech & Rainmatter]; cost = [Reg & Exchange, Employee Pool, Tech Ops]
+    const ZERODHA_SCENARIOS = {
+      fy24: {
+        label: "FY24 Peak",
+        rev: [7800, 1400, 800],
+        cost: [2800, 1050, 650],
+        note: "Peak retail derivative trading volume and multiple weekly expiries prior to regulatory clampdown.",
+        revBreakdown: [
+          { k: "F&O Intraday", col: "var(--zerodha-blue)", basis: "Flat ₹20 fees on massive retail options index volumes (~₹7,800 Cr)." },
+          { k: "Interest & Float", col: "var(--emerald)", basis: "Margin trade funding, exchange treasury float, and bank interest (~₹1,400 Cr)." },
+          { k: "Tech & Partner", col: "var(--amber)", basis: "Kite Connect APIs, Rainmatter portfolio returns, and partner distributions (~₹800 Cr)." }
+        ]
+      },
+      fy25: {
+        label: "FY25 Current",
+        rev: [6900, 1240, 707],
+        cost: [2674, 1014, 922],
+        note: "Consolidated RoC filing: revenue down 11.5% and net profit down 22.9% post initial SEBI STT hikes.",
+        revBreakdown: [
+          { k: "F&O Intraday", col: "var(--zerodha-blue)", basis: "Options volume contracted following higher STT & expiry shifts (~₹6,900 Cr)." },
+          { k: "Interest & Float", col: "var(--emerald)", basis: "Treasury interest and margin pledge balances (~₹1,240 Cr)." },
+          { k: "Tech & Partner", col: "var(--amber)", basis: "Kite Connect developer APIs, Coin, and Rainmatter dividends (~₹707 Cr)." }
+        ]
+      },
+      fy26: {
+        label: "FY26 Projected",
+        rev: [5400, 1150, 950],
+        cost: [2500, 980, 870],
+        note: "Modelled full-year impact of reduced weekly expiries and true-to-label exchange fee mandates.",
+        revBreakdown: [
+          { k: "F&O Intraday", col: "var(--zerodha-blue)", basis: "Single weekly expiry per exchange limits overall speculative churn (~₹5,400 Cr)." },
+          { k: "Interest & Float", col: "var(--emerald)", basis: "Float income on cash reserves & MTF facilities (~₹1,150 Cr)." },
+          { k: "Tech & Partner", col: "var(--amber)", basis: "Expansion into paid analytics (Kite Start) and wealth distribution (~₹950 Cr)." }
+        ]
+      }
+    };
+
+    let curFinScn = 'fy25';
+
+    function roundedTopPath(x, y, w, h, r) {
+      r = Math.min(r, h, w / 2);
+      return `M${x} ${y + r} Q${x} ${y} ${x + r} ${y} L${x + w - r} ${y} Q${x + w} ${y} ${x + w} ${y + r} L${x + w} ${y + h} L${x} ${y + h} Z`;
+    }
+
+    /* P&L Grouped Stacked Bar Chart */
+    function buildZerodhaPnl() {
+      const host = document.getElementById('pnl-svg');
+      if (!host) return;
+
+      const s = ZERODHA_SCENARIOS[curFinScn];
+      const revT = s.rev.reduce((a, b) => a + b, 0);
+      const costT = s.cost.reduce((a, b) => a + b, 0);
+      const net = revT - costT;
+
+      const W = 460, H = 400, padT = 30, padB = 54, padL = 20, padR = 20, base = H - padB;
+      const max = Math.max(revT, costT, 10500) * 1.05;
+      const sc = (base - padT) / max;
+      const barW = 125;
+      const groupGap = (W - padL - padR - 2 * barW) / 3;
+      const revX = padL + groupGap;
+      const costX = padL + groupGap * 2 + barW;
+
+      const revSegs = [
+        { v: s.rev[0], c: '#387ED1', l: 'F&O Intraday' },
+        { v: s.rev[1], c: '#10B981', l: 'Interest' },
+        { v: s.rev[2], c: '#F59E0B', l: 'Tech/Other' }
+      ];
+
+      const costSegs = [
+        { v: s.cost[0], c: '#EF4444', l: 'Regulatory' },
+        { v: s.cost[1], c: '#64748B', l: 'Team Pool' },
+        { v: s.cost[2], c: '#94A3B8', l: 'Infra/Ops' }
+      ];
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" class="w-full h-auto" preserveAspectRatio="xMidYMid meet" role="img" aria-label="P and L revenue vs cost">`;
+
+      // Gridlines
+      for (let g = 0; g <= max; g += 2500) {
+        const y = base - g * sc;
+        if (y < padT - 2) break;
+        svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#E2E8F0" stroke-width="1" />`;
+        svg += `<text x="${W - padR}" y="${y - 4}" fill="#94A3B8" font-size="10.5" font-weight="600" text-anchor="end">₹${g} Cr</text>`;
+      }
+
+      function stackBars(x, segs, total) {
+        let y = base, out = '';
+        segs.forEach((sg, i) => {
+          const h = sg.v * sc;
+          if (h <= 0) return;
+          y -= h;
+          out += `<path d="${roundedTopPath(x, y, barW, h, i === segs.length - 1 ? 6 : 0)}" fill="${sg.c}" />`;
+          if (h > 18) {
+            out += `<text x="${x + barW / 2}" y="${y + h / 2 + 4}" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle">${fmtCr(sg.v)}</text>`;
+          }
+        });
+        out += `<text x="${x + barW / 2}" y="${base - total * sc - 8}" fill="#0F172A" font-size="16" font-weight="900" text-anchor="middle">${fmtCr(total)}</text>`;
+        return out;
+      }
+
+      svg += stackBars(revX, revSegs, revT);
+      svg += stackBars(costX, costSegs, costT);
+
+      svg += `<text x="${revX + barW / 2}" y="${base + 22}" fill="#475569" font-size="12" font-weight="800" text-anchor="middle">REVENUE</text>`;
+      svg += `<text x="${costX + barW / 2}" y="${base + 22}" fill="#475569" font-size="12" font-weight="800" text-anchor="middle">COST</text>`;
+      svg += `</svg>`;
+
+      host.innerHTML = svg;
+
+      // Net Callout Card & Basis
+      const netCol = net > 0 ? '#059669' : '#EF4444';
+      const netTable = document.getElementById('pnl-table');
+      if (netTable) {
+        netTable.innerHTML = `
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between" style="border-left: 4px solid ${netCol};">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Net Profit &middot; ${s.label}</p>
+              <p class="text-2xl font-extrabold" style="color: ${netCol};">+${fmtCr(net)}</p>
+            </div>
+            <div class="text-right text-xs text-slate-600">
+              <p>Total Revenue: <b class="text-emerald-700">${fmtCr(revT)}</b></p>
+              <p>Total Expenses: <b class="text-rose-600">${fmtCr(costT)}</b></p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-500 mt-2.5 leading-relaxed">${s.note}</p>
+          <div class="space-y-1.5 mt-3 pt-3 border-t border-slate-100">
+            ${s.revBreakdown.map(b => `<p class="text-xs text-slate-600 flex items-start gap-1.5"><span class="w-2.5 h-2.5 rounded-full mt-0.5 flex-none" style="background:${b.col}"></span><span><b>${b.k}:</b> ${b.basis}</span></p>`).join('')}
+          </div>
+        `;
+      }
+    }
+
+    function setFinScenario(scn) {
+      curFinScn = scn;
+      document.querySelectorAll('#scenario-btns .fin-scn').forEach(b => b.classList.toggle('on', b.dataset.scn === scn));
+      buildZerodhaPnl();
+    }
+    document.querySelectorAll('#scenario-btns .fin-scn').forEach(b => b.addEventListener('click', () => setFinScenario(b.dataset.scn)));
+
+    /* 3D Donut Chart (Matching Benchmark Image 5) */
+    function donutArc(cx, cy, R, r, a0, a1) {
+      const large = (a1 - a0) > Math.PI ? 1 : 0;
+      const x0 = cx + R * Math.cos(a0), y0 = cy + R * Math.sin(a0);
+      const x1 = cx + R * Math.cos(a1), y1 = cy + R * Math.sin(a1);
+      const xi1 = cx + r * Math.cos(a1), yi1 = cy + r * Math.sin(a1);
+      const xi0 = cx + r * Math.cos(a0), yi0 = cy + r * Math.sin(a0);
+      return `M${x0} ${y0} A${R} ${R} 0 ${large} 1 ${x1} ${y1} L${xi1} ${yi1} A${r} ${r} 0 ${large} 0 ${xi0} ${yi0} Z`;
+    }
+
+    function buildZerodhaDonut() {
+      const host = document.getElementById('donut-svg');
+      if (!host) return;
+
+      const DON = [
+        { v: 6900, c: '#387ED1', c2: '#60A5FA', cd: '#1D4ED8', l: 'F&O Brokerage' },
+        { v: 1240, c: '#10B981', c2: '#34D399', cd: '#047857', l: 'Interest & Float' },
+        { v: 707, c: '#F59E0B', c2: '#FBBF24', cd: '#B45309', l: 'Tech & Partner' }
+      ];
+      const total = DON.reduce((a, b) => a + b.v, 0);
+
+      const W = 270, H = 250, cx = 135, cy = 118, R = 96, r = 58, depth = 16, gap = 0.025;
+      let a = -Math.PI / 2;
+      const arr = DON.map(sg => {
+        const frac = sg.v / total;
+        const ang = frac * 2 * Math.PI;
+        const o = Object.assign({}, sg, { frac, a0: a + gap / 2, a1: a + ang - gap / 2 });
+        a += ang;
+        return o;
+      });
+
+      let defs = '<defs>';
+      arr.forEach((sg, i) => {
+        defs += `<linearGradient id="z-dg${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sg.c2}"/><stop offset="1" stop-color="${sg.c}"/></linearGradient>`;
+      });
+      defs += '</defs>';
+
+      let depthL = '', topL = '';
+      arr.forEach((sg, i) => {
+        depthL += `<path d="${donutArc(cx, cy + depth, R, r, sg.a0, sg.a1)}" fill="${sg.cd}"/>`;
+        topL += `<path class="dseg cursor-pointer transition-opacity" data-i="${i}" d="${donutArc(cx, cy, R, r, sg.a0, sg.a1)}" fill="url(#z-dg${i})"/>`;
+      });
+
+      host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="w-full h-auto" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Revenue mix 3D donut">${defs}${depthL}${topL}
+        <text id="donut-ttl" x="${cx}" y="${cy - 3}" font-size="20" font-weight="900" fill="#0F172A" text-anchor="middle">${fmtCr(total)}</text>
+        <text id="donut-sub" x="${cx}" y="${cy + 16}" font-size="9.5" font-weight="700" fill="#64748B" letter-spacing="0.08em" text-anchor="middle">TOTAL FY25</text></svg>`;
+
+      const ttlEl = document.getElementById('donut-ttl'), subEl = document.getElementById('donut-sub');
+      const leg = document.getElementById('donut-legend');
+      if (leg) {
+        leg.innerHTML = arr.map((sg, i) => {
+          const pct = Math.round(sg.frac * 100);
+          return `<div class="flex items-center gap-2 text-xs font-semibold p-2 rounded-lg hover:bg-slate-50 transition cursor-pointer fin-leg-row" data-i="${i}">
+            <span class="w-3 h-3 rounded-full flex-none" style="background:${sg.c}"></span>
+            <span class="text-slate-800 flex-1">${sg.l}</span>
+            <span class="text-slate-500 font-mono">${fmtCr(sg.v)} &middot; ${pct}%</span>
+          </div>`;
+        }).join('');
+
+        function focusDonut(i) {
+          const sg = arr[i];
+          ttlEl.textContent = fmtCr(sg.v);
+          subEl.textContent = Math.round(sg.frac * 100) + '% · ' + sg.l;
+          host.querySelectorAll('.dseg').forEach((p, pi) => p.style.opacity = pi === i ? '1' : '0.35');
+          leg.querySelectorAll('.fin-leg-row').forEach((rw, ri) => rw.style.opacity = ri === i ? '1' : '0.45');
+        }
+
+        function resetDonut() {
+          ttlEl.textContent = fmtCr(total);
+          subEl.textContent = 'TOTAL FY25';
+          host.querySelectorAll('.dseg').forEach(p => p.style.opacity = '1');
+          leg.querySelectorAll('.fin-leg-row').forEach(rw => rw.style.opacity = '1');
+        }
+
+        host.querySelectorAll('.dseg').forEach(p => {
+          p.onmouseenter = () => focusDonut(+p.dataset.i);
+          p.onmouseleave = resetDonut;
+        });
+        leg.querySelectorAll('.fin-leg-row').forEach(rw => {
+          rw.onmouseenter = () => focusDonut(+rw.dataset.i);
+          rw.onmouseleave = resetDonut;
+        });
+      }
+    }
+
+    buildZerodhaPnl();
+    buildZerodhaDonut();
+
+    /* ==============================================================
+         5. CINEMATIC DEPTH-SCROLL TIMELINE LOGIC WITH DYNAMIC ANIMATIONS
+         ============================================================== */
+    (function initDepthScroll() {
+      const section = document.getElementById('timeline');
+      const pin = document.getElementById('dz-pin');
+      const stage = document.getElementById('dz-stage');
+      const moodEl = document.getElementById('dz-mood');
+      const railEl = document.getElementById('dz-rail');
+      const progEl = document.querySelector('#dz-prog i');
+      if (!section || !pin || !stage) return;
+
+      const cards = [...stage.querySelectorAll('.dz-card')];
+      const N = cards.length;
+      if (!N) return;
+
+      const STEP = 1350;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const coarse = window.matchMedia('(pointer: coarse)');
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+      cards.forEach((c, i) => c.style.setProperty('--z', (-i * STEP) + 'px'));
+
+      // Rail dots
+      cards.forEach((c, i) => {
+        const d = document.createElement('button');
+        d.className = 'dz-dot';
+        d.innerHTML = `<span class="lab">${c.dataset.label || ('0' + (i + 1))}</span>`;
+        d.addEventListener('click', () => {
+          const scrollable = section.offsetHeight - window.innerHeight;
+          const top = section.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: top + (i / (N - 1)) * scrollable, behavior: 'smooth' });
+        });
+        railEl.appendChild(d);
+      });
+      const dots = [...railEl.children];
+
+      let enabled = false;
+      function shouldEnable() {
+        return !reduce.matches && !coarse.matches && window.innerWidth >= 880 && window.innerHeight >= 580;
+      }
+
+      function measure() {
+        enabled = shouldEnable();
+        if (!enabled) {
+          section.classList.add('dz-fallback');
+          section.style.height = '';
+          stage.style.transform = '';
+          cards.forEach(c => {
+            c.style.opacity = '';
+            c.style.filter = '';
+            c.style.visibility = '';
+            c.classList.add('active');
+          });
+          return;
+        }
+        section.classList.remove('dz-fallback');
+        section.style.height = (window.innerHeight + N * 550) + 'px';
+        render();
+      }
+
+      // Animate numbers count-up inside active timeline card
+      function triggerCardCount(card) {
+        if (card.dataset.counted === 'true') return;
+        card.dataset.counted = 'true';
+        card.querySelectorAll('.tl-counter').forEach(el => {
+          const target = parseFloat(el.dataset.target);
+          if (isNaN(target)) return;
+          const dec = parseInt(el.dataset.decimals || '0', 10);
+          const suf = el.dataset.suffix || '';
+          const dur = 950;
+          let start = null;
+          function countStep(ts) {
+            if (!start) start = ts;
+            const progress = Math.min(1, (ts - start) / dur);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            const val = target * ease;
+            el.textContent = (dec ? val.toFixed(dec) : Math.round(val)) + suf;
+            if (progress < 1) requestAnimationFrame(countStep);
+            else el.textContent = (dec ? target.toFixed(dec) : Math.round(target)) + suf;
+          }
+          requestAnimationFrame(countStep);
+        });
+      }
+
+      function render() {
+        if (!enabled) return;
+        const rect = section.getBoundingClientRect();
+        const scrollable = section.offsetHeight - window.innerHeight;
+        const p = clamp(scrollable > 0 ? (-rect.top) / scrollable : 0, 0, 1);
+        const camZ = p * (N - 1) * STEP;
+        stage.style.transform = `translateZ(${camZ.toFixed(1)}px)`;
+
+        let nearest = 0;
+        let minDiff = 1e9;
+
+        cards.forEach((c, i) => {
+          const z = camZ - i * STEP;
+          const appr = clamp((z + STEP) / STEP, 0, 1);
+          const leave = clamp(z / (0.75 * STEP), 0, 1);
+          const op = clamp(appr / 0.5, 0, 1) * (1 - leave);
+          const blur = (1 - appr) * 3 + leave * 8;
+
+          c.style.setProperty('--app', appr.toFixed(3));
+          c.style.opacity = op.toFixed(3);
+          c.style.filter = blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none';
+          c.style.visibility = op < 0.02 ? 'hidden' : 'visible';
+
+          // Trigger active animations when card approaches focus
+          const isActive = appr > 0.55 && leave < 0.5;
+          c.classList.toggle('active', isActive);
+          if (isActive) {
+            triggerCardCount(c);
+          } else if (leave > 0.8 || appr < 0.2) {
+            c.dataset.counted = 'false';
+          }
+
+          const diff = Math.abs(z);
+          if (diff < minDiff) {
+            minDiff = diff;
+            nearest = i;
+          }
+        });
+
+        if (moodEl) moodEl.textContent = cards[nearest].dataset.mood || '';
+        dots.forEach((d, i) => d.classList.toggle('on', i === nearest));
+        if (progEl) progEl.style.width = (p * 100).toFixed(2) + '%';
+      }
+
+      window.addEventListener('scroll', () => { if (enabled) requestAnimationFrame(render); }, { passive: true });
+      window.addEventListener('resize', measure);
+      measure();
+    })();
+
+    /* ==============================================================
+       6. PRD USER PERSONAS
+       ============================================================== */
+    const PRD_PERSONAS = [
+      {
+        name: "Priya", age: 24, role: "First Job &middot; Software Associate", city: "Tier-2 City (Jaipur)",
+        quote: "I just want to start a ₹500 monthly index SIP with my salary, but Kite's order pad with CNC, MIS, and bracket orders terrifies me.",
+        accent: "#387ED1",
+        pains: ["Intimidated by derivative jargon (F&O, Stoploss, Market Depth)", "Doesn't know how to evaluate a single stock vs an index basket", "Fears losing monthly savings to inadvertent leverage"],
+        needs: ["1-click automated UPI autopay SIP starting at ₹100", "Clear goal-based starter baskets (Nifty 50 + Gold)", "Simple, non-threatening UI without flickering live ticks"]
+      },
+      {
+        name: "Rahul", age: 32, role: "Senior Analyst &middot; Casual Investor", city: "Tier-1 (Pune)",
+        quote: "I hold blue-chip stocks on Kite and mutual funds on Coin, but checking two apps to see my total net worth is needlessly fragmented.",
+        accent: "#10B981",
+        pains: ["Fragmented portfolio view across multiple apps", "Too busy to monitor day-to-day market volatility", "Wants wealth compounding without clutter"],
+        needs: ["Unified portfolio dashboard bridging equity and funds", "Plain-language dividend and goal milestone tracking", "Quarterly rebalancing suggestions"]
+      },
+      {
+        name: "Vikram", age: 41, role: "Full-Time Day Trader", city: "Mumbai",
+        quote: "Kite is the fastest terminal in India. If Zerodha adds beginner bloat or slows down execution by 50 milliseconds, I will leave for Dhan.",
+        accent: "#8B5CF6",
+        pains: ["Hates UI redesigns that disrupt muscle memory", "Zero tolerance for latency spikes during 9:15 AM market open", "Demands pure, uncluttered charting power"],
+        needs: ["Simple mode MUST be 100% opt-in only", "Zero interference with keyboard trading shortcuts", "High-performance ChartIQ & TradingView fidelity"]
+      }
+    ];
+
+    function renderPersona(idx) {
+      const card = document.getElementById('persona-card');
+      const tabs = document.querySelectorAll('#prd-persona-tabs button');
+      if (!card) return;
+
+      tabs.forEach((t, i) => t.classList.toggle('on', i === idx));
+      const p = PRD_PERSONAS[idx];
+
+      card.innerHTML = `
+        <div class="grid md:grid-cols-3 gap-6 items-start">
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl text-white" style="background:${p.accent}">
+                ${p.name[0]}
+              </div>
+              <div>
+                <h4 class="text-xl font-bold text-slate-900">${p.name}, ${p.age}</h4>
+                <p class="text-xs text-slate-500">${p.role}</p>
+                <p class="text-[11px] font-semibold text-slate-400 mt-0.5">${p.city}</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-200">
+              <p class="text-xs italic text-slate-600 leading-relaxed">"${p.quote}"</p>
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-rose-50/50 border border-rose-200">
+            <span class="text-xs font-bold text-rose-700 uppercase tracking-wider block mb-2">Pain Points & Friction</span>
+            <ul class="space-y-2 text-xs text-slate-700">
+              ${p.pains.map(item => `<li class="flex items-start gap-1.5"><span class="text-rose-500 font-bold">&bull;</span><span>${item}</span></li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200">
+            <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider block mb-2">PRD Solution & Kite Start Fit</span>
+            <ul class="space-y-2 text-xs text-slate-700">
+              ${p.needs.map(item => `<li class="flex items-start gap-1.5"><span class="text-emerald-500 font-bold">&check;</span><span>${item}</span></li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    document.querySelectorAll('#prd-persona-tabs button').forEach((btn, i) => {
+      btn.addEventListener('click', () => renderPersona(i));
+    });
+    renderPersona(0);
+
+    /* ==============================================================
+       7. KITE TERMINAL SIMULATOR (PRO vs KITE START)
+       Supports selection and deselection of sections/cards
+       ============================================================== */
+    const simGoalData = [
+      { name: "Long Term Growth", fund: "Nifty 50 Index Fund", sip: "₹500 / month", risk: "12.4% Historical" },
+      { name: "Balanced & Safe", fund: "Equities + Gold Basket", sip: "₹1,000 / month", risk: "Low Volatility" },
+      { name: "Save Taxes", fund: "ELSS Tax Saver Fund", sip: "₹1,500 / month", risk: "Section 80C Tax Deduction" }
+    ];
+
+    let currentSelectedGoal = 0; // 0, 1, 2 or null (deselected)
+    let currentSelectedOrder = 0; // 0: MIS, 1: CNC, 2: CO/BO or null
+
+    window.setSimMode = function(mode) {
+      const btnPro = document.getElementById('sim-btn-pro');
+      const btnStart = document.getElementById('sim-btn-start');
+      const simUrl = document.getElementById('sim-url');
+      const viewPro = document.getElementById('sim-view-pro');
+      const viewStart = document.getElementById('sim-view-start');
+
+      if (mode === 'pro') {
+        if (btnPro) {
+          btnPro.className = 'sim-toggle-btn px-4 py-2 rounded-lg text-xs font-bold transition-all active bg-white text-blue-600 shadow-sm';
+        }
+        if (btnStart) {
+          btnStart.className = 'sim-toggle-btn px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+        }
+        if (simUrl) simUrl.textContent = 'kite.zerodha.com/terminal/nifty-bank';
+        if (viewPro) viewPro.classList.remove('hidden');
+        if (viewStart) viewStart.classList.add('hidden');
+      } else {
+        if (btnStart) {
+          btnStart.className = 'sim-toggle-btn px-4 py-2 rounded-lg text-xs font-bold transition-all active bg-white text-emerald-600 shadow-sm';
+        }
+        if (btnPro) {
+          btnPro.className = 'sim-toggle-btn px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900';
+        }
+        if (simUrl) simUrl.textContent = 'kite.zerodha.com/start/onboarding';
+        if (viewStart) viewStart.classList.remove('hidden');
+        if (viewPro) viewPro.classList.add('hidden');
+      }
+    };
+
+    window.toggleSimGoal = function(idx) {
+      const cards = document.querySelectorAll('.sim-goal-card');
+      const sipLabel = document.getElementById('sim-sip-label');
+      const sipAmount = document.getElementById('sim-sip-amount');
+      const alertBox = document.getElementById('sim-alert-box');
+      const headerStatus = document.getElementById('sim-start-header-status');
+      const autopayBtn = document.getElementById('sim-autopay-btn');
+
+      if (alertBox) alertBox.classList.add('hidden');
+      if (autopayBtn) {
+        autopayBtn.innerHTML = 'Setup 1-Tap UPI Autopay &rarr;';
+        autopayBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md hover:bg-emerald-700 transition cursor-pointer select-none';
+      }
+
+      // If clicked the currently selected card -> DESELECT it
+      if (currentSelectedGoal === idx) {
+        currentSelectedGoal = null;
+        cards.forEach((card) => {
+          card.className = 'sim-goal-card p-3 rounded-xl border border-slate-200 bg-white hover:border-blue-300 cursor-pointer transition-all select-none relative';
+          const check = card.querySelector('.sim-goal-check');
+          if (check) check.classList.add('hidden');
+        });
+        if (sipLabel) sipLabel.textContent = 'No goal selected:';
+        if (sipAmount) sipAmount.innerHTML = '<span class="text-sm font-semibold text-slate-400">Select a card above</span>';
+        if (headerStatus) headerStatus.textContent = 'Welcome, Priya! • Click a goal to start';
+        return;
+      }
+
+      // SELECT the clicked goal card
+      currentSelectedGoal = idx;
+      cards.forEach((card, i) => {
+        const check = card.querySelector('.sim-goal-check');
+        if (i === idx) {
+          card.className = 'sim-goal-card p-3 rounded-xl border-2 border-blue-500 bg-blue-50/70 shadow-sm cursor-pointer transition-all select-none relative';
+          if (check) check.classList.remove('hidden');
+        } else {
+          card.className = 'sim-goal-card p-3 rounded-xl border border-slate-200 bg-white hover:border-blue-300 cursor-pointer transition-all select-none relative';
+          if (check) check.classList.add('hidden');
+        }
+      });
+
+      const goal = simGoalData[idx];
+      if (sipLabel) sipLabel.textContent = `Monthly SIP for ${goal.name}:`;
+      if (sipAmount) sipAmount.textContent = goal.sip;
+      if (headerStatus) headerStatus.textContent = `Welcome, Priya! • ${goal.name} (${goal.sip})`;
+    };
+
+    window.toggleProOrder = function(idx) {
+      const buttons = document.querySelectorAll('.sim-pro-btn');
+      const orderLabel = document.getElementById('sim-pro-orderpad-label');
+      const orderNames = ["Intraday MIS • SL-M", "CNC Delivery (Long Term)", "CO / BO (Cover Order)"];
+
+      // If clicked the active button -> Deselect it
+      if (currentSelectedOrder === idx) {
+        currentSelectedOrder = null;
+        buttons.forEach(btn => {
+          btn.className = 'sim-pro-btn px-2.5 py-1.5 rounded bg-slate-200 text-slate-700 font-semibold cursor-pointer hover:bg-slate-300 transition select-none';
+        });
+        if (orderLabel) orderLabel.textContent = 'Order Pad: No Order Type Selected (Click to select)';
+        return;
+      }
+
+      // Select
+      currentSelectedOrder = idx;
+      buttons.forEach((btn, i) => {
+        if (i === idx) {
+          btn.className = 'sim-pro-btn px-2.5 py-1.5 rounded bg-blue-600 text-white font-bold cursor-pointer transition select-none shadow-sm';
+        } else {
+          btn.className = 'sim-pro-btn px-2.5 py-1.5 rounded bg-slate-200 text-slate-700 font-semibold cursor-pointer hover:bg-slate-300 transition select-none';
+        }
+      });
+      if (orderLabel) orderLabel.textContent = `Order Pad: ${orderNames[idx]}`;
+    };
+
+    window.triggerSimAutopay = function() {
+      const alertBox = document.getElementById('sim-alert-box');
+      const autopayBtn = document.getElementById('sim-autopay-btn');
+      if (!alertBox || !autopayBtn) return;
+
+      if (currentSelectedGoal === null) {
+        alertBox.className = 'mt-3 p-3 rounded-lg bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold transition-all';
+        alertBox.innerHTML = '⚠️ Please select a Wealth Goal card above before setting up Autopay.';
+        alertBox.classList.remove('hidden');
+        return;
+      }
+
+      const goal = simGoalData[currentSelectedGoal];
+      alertBox.className = 'mt-3 p-3 rounded-lg bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold transition-all';
+      alertBox.innerHTML = `✓ Success! ${goal.sip} UPI Autopay mandate approved for <b>${goal.fund}</b>.`;
+      alertBox.classList.remove('hidden');
+
+      autopayBtn.innerHTML = '✓ Mandate Active';
+      autopayBtn.className = 'px-5 py-2.5 rounded-xl bg-slate-800 text-emerald-400 font-bold text-xs shadow-md transition cursor-pointer select-none';
+    };
+
+    function initSimulator() {
+      // Initialize Pro mode by default
+      window.setSimMode('pro');
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSimulator);
+    } else {
+      initSimulator();
+    }
+  </script>
+</body>
+</html>
